@@ -2,6 +2,7 @@
     <nav class="navbar">
         <router-link to="/home">Home</router-link>
         <router-link to="/uploads">Uploads</router-link>
+        <router-link to="/expenses">Expenses</router-link>
         <button @click="handleSignOut">Sign Out</button>
     </nav>
 </template>

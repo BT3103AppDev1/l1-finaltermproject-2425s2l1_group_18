@@ -3,7 +3,7 @@
         <img src="../assets/finbonacci_logo.png" alt="Finbonacci Logo" width="200">
         <h2>Login</h2>
         <h3>Take control of your financial future with us – smart tracking, powerful insights, and expert advice, all in one place!</h3>
-        <p><input type="text" placeholder="Email or Username" v-model="loginInput"></p>
+        <p><input type="text" placeholder="Email" v-model="loginInput"></p>
         <p><input type="password" placeholder="Password" v-model="password"></p>
         <p v-if="errMsg" class="error">{{ errMsg }}</p>
         <p><button @click="login">Sign In</button></p>

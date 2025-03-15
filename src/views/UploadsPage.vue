@@ -11,7 +11,7 @@
 <script setup>
 import { getAuth, signOut } from 'firebase/auth';
 import { useRouter } from 'vue-router';
-import Navbar from '../components/Navbar.vue';
+import Navbar from '../components/TheNavbar.vue';
 
 const router = useRouter();
 </script>
