@@ -56,7 +56,7 @@ const register = async () => {
             email: email.value,
             savingTarget: parseFloat(savingTarget.value),
         });
-
+        alert("User registered successfully!");
         router.push('/home');  // Redirect to home after successful registration
     } catch (error) {
         if (error.code === "auth/email-already-in-use") {
