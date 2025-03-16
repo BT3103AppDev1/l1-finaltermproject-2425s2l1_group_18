@@ -13,14 +13,14 @@ import { useRouter, useRoute } from 'vue-router';
 const isLoggedIn = ref(false);
 const router = useRouter();
 const route = useRoute();
-let auth;
 
+const auth = getAuth();
 onMounted(() => {
-  auth = getAuth();
   onAuthStateChanged(auth, (user) => {
     isLoggedIn.value = !!user;
   });
 });
+
 
 const handleSignOut = () => {
   signOut(auth).then(() => {

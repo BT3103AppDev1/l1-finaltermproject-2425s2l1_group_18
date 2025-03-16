@@ -24,42 +24,26 @@ const errMsg = ref('');
 const router = useRouter();
 
 const login = async () => {
-    let email = loginInput.value;
-
-    if (!email.includes("@")) {
-        // If input is not an email, assume it's a username and retrieve the associated email
-        const usersRef = collection(db, "users");
-        const q = query(usersRef, where("username", "==", loginInput.value));
-        const querySnapshot = await getDocs(q);
-
-        if (querySnapshot.empty) {
-            errMsg.value = "Username not found";
-            return;
+    try {
+        await signInWithEmailAndPassword(getAuth(), loginInput.value, password.value);
+        router.push('/home');
+    } catch (error) {
+        switch (error.code) {
+            case "auth/invalid-email":
+                errMsg.value = "Invalid Email";
+                break;
+            case "auth/user-not-found":
+                errMsg.value = "No Account With That Email Found";
+                break;
+            case "auth/wrong-password":
+                errMsg.value = "Wrong Password";
+                break;
+            default:
+                errMsg.value = "Login failed. Please try again.";
         }
-
-        email = querySnapshot.docs[0].data().email;
     }
-
-    signInWithEmailAndPassword(getAuth(), email, password.value)
-        .then(() => {
-            console.log("Logged In");
-            router.push('/home');
-        })
-        .catch((error) => {
-
-            switch (error.code) {
-                case "auth/invalid-email":
-                    errMsg.value = "Invalid Email";
-                    break;
-                case "auth/user-not-found":
-                    errMsg.value = "No Account With That Email/Username Found";
-                    break;
-                case "auth/wrong-password":
-                    errMsg.value = "Wrong Password";
-                    break;
-            }
-        });
 };
+
 
 const goToRegister = () => {
     router.push('/register');

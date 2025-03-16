@@ -36,14 +36,12 @@ const getCurrentUser = () => {
     });
 };
 
-router.beforeEach(async(to, from, next) => {
-    if (to.matched.some((record) => record.meta.requiresAuth)) {
-        if (await getCurrentUser()) {
-            next();
-        } else {
-            alert("You must be logged in to see this page");
-            next("/");
-        }
+router.beforeEach(async (to, from, next) => {
+    const user = await getCurrentUser();
+
+    if (to.matched.some((record) => record.meta.requiresAuth) && !user) {
+        alert("You must be logged in to see this page");
+        next("/");
     } else {
         next();
     }

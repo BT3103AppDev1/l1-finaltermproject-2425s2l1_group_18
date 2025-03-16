@@ -4,6 +4,7 @@
         <p><input type="text" placeholder="Username" v-model="username"></p>
         <p v-if="usernameError" class="error">{{ usernameError }}</p>
         <p><input type="text" placeholder="Email" v-model="email"></p>
+        <p v-if="emailError" class="error">{{ emailError }}</p>
         <p><input type="password" placeholder="Password" v-model="password"></p>
         <p><input type="number" placeholder="Monthly Saving Target" v-model="savingTarget"></p>
         <p>
@@ -25,35 +26,49 @@ const password = ref('');
 const username = ref('');
 const savingTarget = ref('');
 const usernameError = ref('');
+const emailError = ref('');
 const router = useRouter();
 
+// Function to check if username is unique
 const checkUsernameUnique = async () => {
     const usersRef = collection(db, "users");
     const q = query(usersRef, where("username", "==", username.value));
     const querySnapshot = await getDocs(q);
-    return querySnapshot.empty;
+    return querySnapshot.empty; // Returns true if username is unique
 };
 
 const register = async () => {
+    usernameError.value = "";
+    emailError.value = "";
+
     if (!await checkUsernameUnique()) {
         usernameError.value = "Username already taken!";
         return;
     }
 
-    createUserWithEmailAndPassword(getAuth(), email.value, password.value)
-        .then(async (userCredential) => {
-            const user = userCredential.user;
-            await addDoc(collection(db, "users"), {
-                uid: user.uid,
-                username: username.value,
-                email: email.value,
-                savingTarget: parseFloat(savingTarget.value),
-            });
-            router.push('/home');
-        })
-        .catch((error) => {
-            console.error(error.code, error.message);
+    try {
+        const userCredential = await createUserWithEmailAndPassword(getAuth(), email.value, password.value);
+        const user = userCredential.user;
+
+        await addDoc(collection(db, "users"), {
+            uid: user.uid,
+            username: username.value,
+            email: email.value,
+            savingTarget: parseFloat(savingTarget.value),
         });
+
+        router.push('/home');  // Redirect to home after successful registration
+    } catch (error) {
+        if (error.code === "auth/email-already-in-use") {
+            emailError.value = "Email already registered!";
+        } else if (error.code === "auth/invalid-email") {
+            emailError.value = "Invalid email format!";
+        } else if (error.code === "auth/weak-password") {
+            emailError.value = "Password should be at least 6 characters!";
+        } else {
+            console.error(error.code, error.message);
+        }
+    }
 };
 
 const goToLogin = () => {
