@@ -64,7 +64,24 @@ const fetchSpending = async () => {
     if (!userDocId.value) return;
 
     const expensesRef = collection(db, "users", userDocId.value, "expenses");
-    const querySnapshot = await getDocs(expensesRef);
+
+    // Get current year and month
+    const now = new Date();
+    const year = now.getFullYear();
+    const month = (now.getMonth() + 1).toString().padStart(2, "0"); // Ensure 2-digit month
+
+    // Define start and end date strings
+    const startOfMonth = `${year}-${month}-01`;
+    const endOfMonth = `${year}-${month}-31`; // Works since "31" is always the highest valid date
+
+    // Firestore query to filter expenses within the current month
+    const q = query(
+        expensesRef,
+        where("date", ">=", startOfMonth),
+        where("date", "<=", endOfMonth)
+    );
+
+    const querySnapshot = await getDocs(q);
 
     // Reset spending amounts
     const categoryTotals = {
@@ -86,6 +103,7 @@ const fetchSpending = async () => {
 
     spending.value = categoryTotals;
 };
+
 
 // Fetch spending goals
 const fetchSpendingGoals = async () => {
