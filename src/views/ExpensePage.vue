@@ -4,8 +4,25 @@
         <div class="container">
             <h2>All Expenses</h2>
 
+            <!-- Month & Year Filter -->
+            <div>
+                <select v-model="filterMonth">
+                    <option value="">All Months</option>
+                    <option v-for="m in 12" :key="m" :value="m.toString().padStart(2, '0')">
+                        {{ new Date(0, m - 1).toLocaleString('default', { month: 'long' }) }}
+                    </option>
+                </select>
+
+                <select v-model="filterYear">
+                    <option value="">All Years</option>
+                    <option v-for="year in availableYears" :key="year" :value="year">
+                        {{ year }}
+                    </option>
+                </select>
+            </div>
+
             <!-- Sort Dropdown -->
-            <select v-model="sortBy" @change="sortExpenses">
+            <select v-model="sortBy">
                 <option value="costAsc">Cost Asc</option>
                 <option value="costDesc">Cost Desc</option>
                 <option value="dateAsc">Date Asc</option>
@@ -42,7 +59,7 @@
                 </tbody>
             </table>
 
-            <button @click="openNewExpenseModal">Add Expense</button>
+            <button @click="showAddExpenseModal = true">Add Expense</button>
         </div>
 
         <!-- Add / Edit Expense Modal -->
@@ -50,16 +67,9 @@
             <div class="modal-content">
                 <h3>{{ isEditing ? 'Edit Expense' : 'New Expense' }}</h3>
 
-                <label>Title:</label>
                 <input v-model="newExpense.title" placeholder="Title" />
-
-                <label>Cost:</label>
                 <input v-model.number="newExpense.cost" type="number" placeholder="Cost" />
-
-                <label>Date:</label>
                 <input v-model="newExpense.date" type="date" />
-
-                <label>Category:</label>
                 <select v-model="newExpense.category">
                     <option value="Food">Food</option>
                     <option value="Transport">Transport</option>
@@ -68,14 +78,10 @@
                     <option value="Groceries">Groceries</option>
                     <option value="Others">Others</option>
                 </select>
-
-                <label>Type:</label>
                 <select v-model="newExpense.type">
                     <option value="One Time">One Time</option>
                     <option value="Recurring">Recurring</option>
                 </select>
-
-                <label>Merchant:</label>
                 <input v-model="newExpense.merchant" placeholder="Merchant" />
 
                 <button @click="isEditing ? updateExpense() : saveExpense()">
@@ -102,7 +108,10 @@ const showAddExpenseModal = ref(false);
 const isEditing = ref(false);
 const editingExpenseId = ref(null);
 
-const defaultExpense = () => ({
+const filterMonth = ref("");
+const filterYear = ref("");
+
+const newExpense = ref({
     title: "",
     cost: 0,
     date: "",
@@ -110,15 +119,6 @@ const defaultExpense = () => ({
     type: "One Time",
     merchant: "",
 });
-
-const newExpense = ref(defaultExpense());
-
-// Open modal for new expense (clear previous inputs)
-const openNewExpenseModal = () => {
-    newExpense.value = defaultExpense();
-    isEditing.value = false;
-    showAddExpenseModal.value = true;
-};
 
 // Find the Correct User Document
 const getUserDocId = async () => {
@@ -129,7 +129,10 @@ const getUserDocId = async () => {
     const q = query(usersRef, where("uid", "==", user.uid));
     const querySnapshot = await getDocs(q);
 
-    return !querySnapshot.empty ? querySnapshot.docs[0].id : null;
+    if (!querySnapshot.empty) {
+        return querySnapshot.docs[0].id;
+    }
+    return null;
 };
 
 // Fetch Expenses for Logged-in User
@@ -139,7 +142,7 @@ const fetchExpenses = async () => {
 
     const expensesRef = collection(db, "users", userDocId, "expenses");
     const querySnapshot = await getDocs(expensesRef);
-
+    
     expenses.value = querySnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
 };
 
@@ -187,9 +190,19 @@ const deleteExpense = async (id) => {
     fetchExpenses();
 };
 
+// Filter Expenses by MM/YYYY
+const filteredExpenses = computed(() => {
+    return expenses.value.filter(expense => {
+        const expenseDate = new Date(expense.date);
+        const monthMatches = !filterMonth.value || (expenseDate.getMonth() + 1).toString().padStart(2, "0") === filterMonth.value;
+        const yearMatches = !filterYear.value || expenseDate.getFullYear().toString() === filterYear.value;
+        return monthMatches && yearMatches;
+    });
+});
+
 // Sort Expenses
 const sortedExpenses = computed(() => {
-    let sorted = [...expenses.value];
+    let sorted = [...filteredExpenses.value];
     switch (sortBy.value) {
         case "costAsc": return sorted.sort((a, b) => a.cost - b.cost);
         case "costDesc": return sorted.sort((a, b) => b.cost - a.cost);
@@ -200,6 +213,11 @@ const sortedExpenses = computed(() => {
         case "category": return sorted.sort((a, b) => a.category.localeCompare(b.category));
         default: return sorted;
     }
+});
+
+// Get Available Years
+const availableYears = computed(() => {
+    return Array.from(new Set(expenses.value.map(exp => new Date(exp.date).getFullYear().toString()))).sort((a, b) => b - a);
 });
 
 onMounted(fetchExpenses);
