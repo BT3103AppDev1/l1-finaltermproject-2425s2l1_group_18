@@ -140,27 +140,64 @@
   </script>
   
   <style scoped>
+  /* Set background color */
+  body, html {
+    background-color: bisque;
+    margin: 0;
+    padding: 0;
+    font-family: Arial, sans-serif;
+    height: 100%;
+  }
+  
+  /* Container styling */
   .container {
     max-width: 800px;
     margin: auto;
     text-align: center;
+    padding: 20px;
+    background-color: bisque;
   }
+  
+  /* Table styling */
   table {
     width: 100%;
     border-collapse: collapse;
     margin-top: 10px;
+    background: white;
+    border-radius: 10px;
+    overflow: hidden;
   }
+  
   th, td {
     border: 1px solid #ddd;
-    padding: 8px;
+    padding: 10px;
     text-align: center;
   }
+  
   th {
-    background-color: #f4f4f4;
+    background-color: #e0e0e0;
+    font-weight: bold;
   }
+  
+  /* Dropdown styling */
   select {
     margin-bottom: 15px;
-    padding: 5px;
+    padding: 8px;
+    font-size: 14px;
+    border-radius: 5px;
+    border: 1px solid #ccc;
+  }
+  
+  /* Chart section styling */
+  h3 {
+    margin-top: 20px;
+    color: #333;
+  }
+  
+  /* Centering the dropdown */
+  label {
+    font-weight: bold;
+    margin-right: 10px;
   }
   </style>
   
