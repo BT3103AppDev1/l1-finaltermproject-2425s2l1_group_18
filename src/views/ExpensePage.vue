@@ -244,7 +244,6 @@ h2 {
     font-weight: normal;
     text-align: center;
 }
-
 .view-edit-button, .delete-button {
     font-family: "Georgia", serif;
 }
@@ -356,6 +355,7 @@ button:nth-child(2) {
     cursor: pointer;
     font-family: "Georgia", serif;
 }
+
 .add-expense-btn:hover {
     background: #e2c5ff;
 }
@@ -376,8 +376,45 @@ button:nth-child(2) {
     background-color: rgb(251, 248, 243);
 }
 
+/* Dropdown styling */
+select {
+    padding: 8px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    font-size: 14px;
+    background: white;
+}
+
 .expenses-table .actions-column {
     padding-left: 50px; /* Adjust this value to move the column to the right */
 }
 
+
+/* Modal Styling */
+.modal {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    background: white;
+    padding: 20px;
+    border-radius: 10px;
+    box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.2);
+    width: 400px;
+}
+
+.modal-content input, .modal-content select {
+    width: 100%;
+    padding: 8px;
+    margin: 10px 0;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+}
+
+/* Dropdown alignment */
+.sort-container {
+    display: flex;
+    justify-content: flex-end;
+    margin-bottom: 10px;
+}
 </style>
