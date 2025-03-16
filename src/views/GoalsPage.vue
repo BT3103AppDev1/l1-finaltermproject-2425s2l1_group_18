@@ -10,9 +10,9 @@
                 <div v-for="(goal, category) in spendingGoals" :key="category" class="goal">
                     <div class="goal-header">
                         <h3>{{ category }}</h3>
-                        <p>${{ spending[category] }} / ${{ goal }}</p>
+                        <p>${{ spending[category] || 0 }} / ${{ goal }}</p>
                     </div>
-                    <progress :value="spending[category]" :max="goal"></progress>
+                    <progress :value="spending[category] || 0" :max="goal"></progress>
                     <input v-model="spendingGoals[category]" type="number" min="0" />
                     <button @click="saveGoal(category)">Save</button>
                 </div>
@@ -32,14 +32,7 @@ const db = getFirestore();
 
 const userDocId = ref(null);
 const spendingGoals = ref({});
-const spending = ref({
-    Food: 250,
-    Transport: 120,
-    Shopping: 350,
-    Utilities: 90,
-    Groceries: 200,
-    Others: 50
-});
+const spending = ref({});  // Dynamically fetched from Firestore
 const loading = ref(true);
 
 const defaultGoals = {
@@ -66,6 +59,34 @@ const getUserDocId = async () => {
     return null;
 };
 
+// Fetch spending from Firestore
+const fetchSpending = async () => {
+    if (!userDocId.value) return;
+
+    const expensesRef = collection(db, "users", userDocId.value, "expenses");
+    const querySnapshot = await getDocs(expensesRef);
+
+    // Reset spending amounts
+    const categoryTotals = {
+        Food: 0,
+        Transport: 0,
+        Shopping: 0,
+        Utilities: 0,
+        Groceries: 0,
+        Others: 0
+    };
+
+    // Aggregate spending per category
+    querySnapshot.forEach(doc => {
+        const data = doc.data();
+        if (data.category && data.cost) {
+            categoryTotals[data.category] += data.cost;
+        }
+    });
+
+    spending.value = categoryTotals;
+};
+
 // Fetch spending goals
 const fetchSpendingGoals = async () => {
     const docId = await getUserDocId();
@@ -87,6 +108,8 @@ const fetchSpendingGoals = async () => {
             await setDoc(goalRef, { goal: defaultGoals[category] });
         }
     }
+
+    await fetchSpending();
     loading.value = false;
 };
 
@@ -99,12 +122,13 @@ const saveGoal = async (category) => {
     alert(`Updated ${category} goal to $${spendingGoals.value[category]}`);
 };
 
-// Fetch goals when the user logs in
+// Fetch data when the user logs in
 onAuthStateChanged(auth, async (user) => {
     if (user) {
         await fetchSpendingGoals();
     } else {
         spendingGoals.value = {};
+        spending.value = {};
         loading.value = false;
     }
 });
