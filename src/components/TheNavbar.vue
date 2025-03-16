@@ -42,6 +42,7 @@ body, html {
     border-radius: 18px;
     border : 1.4px solid black;
     margin : 0 auto;
+    margin-top: 40px;
 }
 
 .navbar a {
