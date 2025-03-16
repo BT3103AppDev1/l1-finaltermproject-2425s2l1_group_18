@@ -1,4 +1,5 @@
 <template>
+  <div class="navbar-container">
     <nav class="navbar">
         <router-link to="/home">Home</router-link>
         <span class="separator">|</span>
@@ -10,6 +11,14 @@
         <span class="separator">|</span>
         <button @click="handleSignOut">Sign Out</button>
     </nav>
+
+    <!-- Settings Icon -->
+    <div class="settings-icon">
+        <router-link to="/settings">
+            <img src="../assets/settings-icon.png" alt="Settings Icon" />
+        </router-link>
+    </div>
+  </div>
 </template>
 
 <script setup>
@@ -32,6 +41,15 @@ body, html {
     padding: 0;
 }
 
+.navbar-container {
+    position: relative;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 80%;
+    margin: 40px auto;
+}
+
 .navbar {
     width : 60%;
     display: flex;
@@ -42,7 +60,6 @@ body, html {
     border-radius: 18px;
     border : 1.4px solid black;
     margin : 0 auto;
-    margin-top: 40px;
 }
 
 .navbar a {
@@ -71,5 +88,12 @@ body, html {
 
 .navbar button:hover {
     background-color: rgb(228, 228, 228);
+}
+
+.settings-icon img {
+    width: 30px;
+    height: 30px;
+    object-fit: contain;
+    cursor: pointer;
 }
 </style>
