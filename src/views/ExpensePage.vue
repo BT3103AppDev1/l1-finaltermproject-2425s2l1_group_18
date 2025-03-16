@@ -42,7 +42,7 @@
                 </tbody>
             </table>
 
-            <button @click="showAddExpenseModal = true">Add Expense</button>
+            <button @click="openNewExpenseModal">Add Expense</button>
         </div>
 
         <!-- Add / Edit Expense Modal -->
@@ -50,9 +50,16 @@
             <div class="modal-content">
                 <h3>{{ isEditing ? 'Edit Expense' : 'New Expense' }}</h3>
 
+                <label>Title:</label>
                 <input v-model="newExpense.title" placeholder="Title" />
+
+                <label>Cost:</label>
                 <input v-model.number="newExpense.cost" type="number" placeholder="Cost" />
+
+                <label>Date:</label>
                 <input v-model="newExpense.date" type="date" />
+
+                <label>Category:</label>
                 <select v-model="newExpense.category">
                     <option value="Food">Food</option>
                     <option value="Transport">Transport</option>
@@ -61,10 +68,14 @@
                     <option value="Groceries">Groceries</option>
                     <option value="Others">Others</option>
                 </select>
+
+                <label>Type:</label>
                 <select v-model="newExpense.type">
                     <option value="One Time">One Time</option>
                     <option value="Recurring">Recurring</option>
                 </select>
+
+                <label>Merchant:</label>
                 <input v-model="newExpense.merchant" placeholder="Merchant" />
 
                 <button @click="isEditing ? updateExpense() : saveExpense()">
@@ -91,7 +102,7 @@ const showAddExpenseModal = ref(false);
 const isEditing = ref(false);
 const editingExpenseId = ref(null);
 
-const newExpense = ref({
+const defaultExpense = () => ({
     title: "",
     cost: 0,
     date: "",
@@ -99,6 +110,15 @@ const newExpense = ref({
     type: "One Time",
     merchant: "",
 });
+
+const newExpense = ref(defaultExpense());
+
+// Open modal for new expense (clear previous inputs)
+const openNewExpenseModal = () => {
+    newExpense.value = defaultExpense();
+    isEditing.value = false;
+    showAddExpenseModal.value = true;
+};
 
 // Find the Correct User Document
 const getUserDocId = async () => {
@@ -109,10 +129,7 @@ const getUserDocId = async () => {
     const q = query(usersRef, where("uid", "==", user.uid));
     const querySnapshot = await getDocs(q);
 
-    if (!querySnapshot.empty) {
-        return querySnapshot.docs[0].id;
-    }
-    return null;
+    return !querySnapshot.empty ? querySnapshot.docs[0].id : null;
 };
 
 // Fetch Expenses for Logged-in User
@@ -122,7 +139,7 @@ const fetchExpenses = async () => {
 
     const expensesRef = collection(db, "users", userDocId, "expenses");
     const querySnapshot = await getDocs(expensesRef);
-    
+
     expenses.value = querySnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
 };
 
