@@ -2,38 +2,41 @@
     <div>
         <Navbar />
         <div class="container">
-            <h2>All Expenses</h2>
+            <div class="header">
+                <h2>All Expenses</h2>
+                <img src="@/assets/finbonacci_logo.png" alt="Logo" class="logo-image" />
+        </div>
+            
+            <div class="filter-buttons-container">
+                <!-- Month & Year Filter -->
+                    <select v-model="filterMonth" class="filter-button">
+                        <option value="">All Months</option>
+                        <option v-for="m in 12" :key="m" :value="m.toString().padStart(2, '0')">
+                            {{ new Date(0, m - 1).toLocaleString('default', { month: 'long' }) }}
+                        </option>
+                    </select>
 
-            <!-- Month & Year Filter -->
-            <div>
-                <select v-model="filterMonth">
-                    <option value="">All Months</option>
-                    <option v-for="m in 12" :key="m" :value="m.toString().padStart(2, '0')">
-                        {{ new Date(0, m - 1).toLocaleString('default', { month: 'long' }) }}
-                    </option>
-                </select>
+                    <select v-model="filterYear" class="filter-button">
+                        <option value="">All Years</option>
+                        <option v-for="year in availableYears" :key="year" :value="year">
+                            {{ year }}
+                        </option>
+                    </select>
 
-                <select v-model="filterYear">
-                    <option value="">All Years</option>
-                    <option v-for="year in availableYears" :key="year" :value="year">
-                        {{ year }}
-                    </option>
+                <!-- Sort Dropdown -->
+                <select v-model="sortBy" class="filter-button">
+                    <option value="costAsc">Cost Asc</option>
+                    <option value="costDesc">Cost Desc</option>
+                    <option value="dateAsc">Date Asc</option>
+                    <option value="dateDesc">Date Desc</option>
+                    <option value="alphaAsc">Alphabetical Asc</option>
+                    <option value="alphaDesc">Alphabetical Desc</option>
+                    <option value="category">Category</option>
                 </select>
             </div>
 
-            <!-- Sort Dropdown -->
-            <select v-model="sortBy">
-                <option value="costAsc">Cost Asc</option>
-                <option value="costDesc">Cost Desc</option>
-                <option value="dateAsc">Date Asc</option>
-                <option value="dateDesc">Date Desc</option>
-                <option value="alphaAsc">Alphabetical Asc</option>
-                <option value="alphaDesc">Alphabetical Desc</option>
-                <option value="category">Category</option>
-            </select>
-
             <!-- Expenses Table -->
-            <table>
+            <table class="expenses-table">
                 <thead>
                     <tr>
                         <th>Title</th>
@@ -41,25 +44,28 @@
                         <th>Date</th>
                         <th>Category</th>
                         <th>Type</th>
-                        <th>Actions</th>
+                        <th class="actions-column">Actions</th>
                     </tr>
                 </thead>
                 <tbody>
-                    <tr v-for="expense in sortedExpenses" :key="expense.id">
+                    <tr v-for="expense in sortedExpenses" :key="expense.id" :class="{'recurring': expense.type === 'Recurring', 'one-time': expense.type === 'One Time'}">
                         <td>{{ expense.title }}</td>
                         <td>${{ expense.cost.toFixed(2) }}</td>
                         <td>{{ expense.date }}</td>
                         <td>{{ expense.category }}</td>
                         <td>{{ expense.type }}</td>
                         <td>
-                            <button @click="editExpense(expense)">View & Edit</button>
-                            <button @click="deleteExpense(expense.id)">Remove</button>
+                            <button class="view-edit-button" @click="editExpense(expense)">View & Edit</button>
+                            <button class="delete-button" @click="deleteExpense(expense.id)">Remove</button>
                         </td>
                     </tr>
                 </tbody>
             </table>
 
-            <button @click="showAddExpenseModal = true">Add Expense</button>
+            <!-- Add Expense Button Container -->
+            <div class="add-expense-container">
+                <button class="add-expense-btn" @click="showAddExpenseModal = true">Add Expense</button>
+            </div>
         </div>
 
         <!-- Add / Edit Expense Modal -->
@@ -226,11 +232,21 @@ onMounted(fetchExpenses);
 <style scoped>
 /* General page styling */
 body, html {
-    background-color: bisque;
+    background-color: rgb(251, 248, 243);
     margin: 0;
     padding: 0;
-    font-family: Arial, sans-serif;
+    font-family: "Georgia", serif;
     height: 100%;
+}
+
+h2 {
+    font-family: "Georgia", serif;
+    font-weight: normal;
+    text-align: center;
+}
+
+.view-edit-button, .delete-button {
+    font-family: "Georgia", serif;
 }
 
 /* General container styling */
@@ -239,40 +255,72 @@ body, html {
     height: 100vh;
     padding: 20px;
     box-sizing: border-box;
-    background-color: bisque;
+    background-color: rgb(251, 248, 243);
+}
+
+.header {
+    position: relative;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 100%;
+    margin-top: 30px;
+    margin-bottom: 60px; /* Add margin to separate from the table */
+}
+
+.header h2 {
+    position: absolute;
+    left: 50%;
+    transform: translateX(-50%);
+}
+
+.logo-image {
+    position: absolute;
+    right: 0;
+    max-width: 170px; 
+    height: auto;
+    top: -55px; 
 }
 
 /* Table styling */
 table {
     width: 100%;
     border-collapse: collapse;
-    background: white;
-    border-radius: 10px;
+    border-spacing: 0 1px;
+    background: black;
+    border-radius: 18px;
     overflow: hidden;
+    border: 1px solid black;
 }
 
 th, td {
-    padding: 12px;
+    padding: 9px;
     text-align: left;
-    border-bottom: 1px solid #ddd;
+    border-bottom: 1px solid black;
 }
 
 th {
-    background: #e0e0e0;
+    background: rgb(251, 248, 243);
     font-weight: bold;
 }
 
-tr:nth-child(even) {
-    background: #f2f2f2;
+/* Recurring Expenses Row Color */
+tr.recurring {
+    background-color: #ffebc3; /* Light Orange */
+}
+
+/* One-Time Expenses Row Color */
+tr.one-time {
+    background-color: #c3ffc3; /* Lime Green */
 }
 
 /* Button styling */
 button {
     padding: 8px 14px;
-    border: none;
-    border-radius: 5px;
+    border: 0.4px black solid;
+    border-radius: 35px;
     cursor: pointer;
-    font-size: 14px;
+    font-size: 12px;
 }
 
 button:hover {
@@ -281,59 +329,55 @@ button:hover {
 
 /* Edit and Remove Buttons */
 button:nth-child(1) {
-    background: #2a9d8f;
-    color: white;
+    background: #a8eaf8;
+    color: black;
 }
 
 button:nth-child(2) {
-    background: #e63946;
-    color: white;
+    background: #f97f8a;
+    color: black;
+}
+
+/* Centering the Add Expense Button */
+.add-expense-container {
+    display: flex;
+    justify-content: center;
+    margin-top: 20px;
 }
 
 /* Add Expense Button */
 .add-expense-btn {
-    display: block;
-    margin: 20px auto;
-    background: #264653;
+    background: #a8eaf8;
     color: white;
-    padding: 10px 20px;
-    font-size: 16px;
+    padding: 10px 15px;
+    font-size: 13px;
+    border: 0.5px solid black;
+    border-radius: 35px;
+    cursor: pointer;
+    font-family: "Georgia", serif;
+}
+.add-expense-btn:hover {
+    background: #e2c5ff;
 }
 
-/* Dropdown styling */
-select {
-    padding: 8px;
-    border: 1px solid #ccc;
-    border-radius: 5px;
-    font-size: 14px;
-    background: white;
-}
-
-/* Modal Styling */
-.modal {
-    position: fixed;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-    background: white;
-    padding: 20px;
-    border-radius: 10px;
-    box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.2);
-    width: 400px;
-}
-
-.modal-content input, .modal-content select {
-    width: 100%;
-    padding: 8px;
-    margin: 10px 0;
-    border: 1px solid #ccc;
-    border-radius: 5px;
-}
-
-/* Dropdown alignment */
-.sort-container {
+.filter-buttons-container {
     display: flex;
-    justify-content: flex-end;
-    margin-bottom: 10px;
+    justify-content: flex-start; 
+    gap: 2px; 
+    margin-bottom: 8px;  
+    background-color: rgb(251, 248, 243);
 }
+
+.filter-button {
+    padding: 3px 3px;
+    font-size: 12px;
+    cursor: pointer;
+    border-radius: 10px;
+    background-color: rgb(251, 248, 243);
+}
+
+.expenses-table .actions-column {
+    padding-left: 50px; /* Adjust this value to move the column to the right */
+}
+
 </style>

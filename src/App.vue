@@ -29,17 +29,22 @@ const handleSignOut = () => {
 };
 </script>
 
-<style scoped>
+<style>
+/* Global styles (apply to entire page) */
 body {
   margin: 0;
-  font-family: Arial, sans-serif;
-  background-color: bisque;
+  font-family: "Georgia", serif;
+  background-color: rgb(251, 248, 243);
 }
+</style>
+
+<style scoped>
 nav {
   display: flex;
   justify-content: flex-end;
   padding: 10px;
 }
+
 button {
   padding: 10px 20px;
   background-color: grey;

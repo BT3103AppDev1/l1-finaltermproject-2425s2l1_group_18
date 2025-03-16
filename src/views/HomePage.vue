@@ -142,7 +142,7 @@
   <style scoped>
   /* Set background color */
   body, html {
-    background-color: bisque;
+    background-color: rgb(251, 248, 243);
     margin: 0;
     padding: 0;
     font-family: Arial, sans-serif;
@@ -155,7 +155,7 @@
     margin: auto;
     text-align: center;
     padding: 20px;
-    background-color: bisque;
+    background-color: rgb(251, 248, 243);
   }
   
   /* Table styling */

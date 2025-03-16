@@ -23,7 +23,7 @@ const router = useRouter();
     justify-content: center;
     align-items: center;
     height: 100vh;
-    background-color: bisque;
+    background-color: rgb(251, 248, 243);
     text-align: center;
 }
 </style>

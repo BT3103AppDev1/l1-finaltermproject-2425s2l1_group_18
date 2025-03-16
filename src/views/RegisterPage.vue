@@ -83,7 +83,7 @@ const goToLogin = () => {
     justify-content: center;
     align-items: center;
     height: 100vh;
-    background-color: bisque;
+    background-color: rgb(251, 248, 243);
 }
 
 h2, h1, p {
