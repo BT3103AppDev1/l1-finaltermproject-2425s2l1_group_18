@@ -2,27 +2,18 @@
     <div>
         <Navbar />
         <div class="container">
-            <h2 id="title">All Expenses</h2>
+            <h2>All Expenses</h2>
 
-            <!-- Sorting & Filtering Section -->
-            <div class="controls">
-                <label>Sort By:</label>
-                <select v-model="sortBy">
-                    <option value="costAsc">Cost Asc</option>
-                    <option value="costDesc">Cost Desc</option>
-                    <option value="dateAsc">Date Asc</option>
-                    <option value="dateDesc">Date Desc</option>
-                    <option value="alphaAsc">Alphabetical Asc</option>
-                    <option value="alphaDesc">Alphabetical Desc</option>
-                    <option value="category">Category</option>
-                </select>
-
-                <label>Filter By Month:</label>
-                <select v-model="filterMonth">
-                    <option value="">All</option>
-                    <option v-for="month in availableMonths" :key="month" :value="month">{{ month }}</option>
-                </select>
-            </div>
+            <!-- Sort Dropdown -->
+            <select v-model="sortBy" @change="sortExpenses">
+                <option value="costAsc">Cost Asc</option>
+                <option value="costDesc">Cost Desc</option>
+                <option value="dateAsc">Date Asc</option>
+                <option value="dateDesc">Date Desc</option>
+                <option value="alphaAsc">Alphabetical Asc</option>
+                <option value="alphaDesc">Alphabetical Desc</option>
+                <option value="category">Category</option>
+            </select>
 
             <!-- Expenses Table -->
             <table>
@@ -53,6 +44,46 @@
 
             <button @click="openNewExpenseModal">Add Expense</button>
         </div>
+
+        <!-- Add / Edit Expense Modal -->
+        <div v-if="showAddExpenseModal" class="modal">
+            <div class="modal-content">
+                <h3>{{ isEditing ? 'Edit Expense' : 'New Expense' }}</h3>
+
+                <label>Title:</label>
+                <input v-model="newExpense.title" placeholder="Title" />
+
+                <label>Cost:</label>
+                <input v-model.number="newExpense.cost" type="number" placeholder="Cost" />
+
+                <label>Date:</label>
+                <input v-model="newExpense.date" type="date" />
+
+                <label>Category:</label>
+                <select v-model="newExpense.category">
+                    <option value="Food">Food</option>
+                    <option value="Transport">Transport</option>
+                    <option value="Shopping">Shopping</option>
+                    <option value="Utilities">Utilities</option>
+                    <option value="Groceries">Groceries</option>
+                    <option value="Others">Others</option>
+                </select>
+
+                <label>Type:</label>
+                <select v-model="newExpense.type">
+                    <option value="One Time">One Time</option>
+                    <option value="Recurring">Recurring</option>
+                </select>
+
+                <label>Merchant:</label>
+                <input v-model="newExpense.merchant" placeholder="Merchant" />
+
+                <button @click="isEditing ? updateExpense() : saveExpense()">
+                    {{ isEditing ? 'Update Expense' : 'Save Expense' }}
+                </button>
+                <button @click="showAddExpenseModal = false">Cancel</button>
+            </div>
+        </div>
     </div>
 </template>
 
@@ -67,32 +98,98 @@ const auth = getAuth();
 
 const expenses = ref([]);
 const sortBy = ref("dateDesc");
-const filterMonth = ref(""); // Default: Show all months
+const showAddExpenseModal = ref(false);
+const isEditing = ref(false);
+const editingExpenseId = ref(null);
 
-// Get available months in (mm/yy) format
-const availableMonths = computed(() => {
-    const monthsSet = new Set();
-    expenses.value.forEach(expense => {
-        const date = new Date(expense.date);
-        const monthYear = `${String(date.getMonth() + 1).padStart(2, "0")}/${date.getFullYear()}`;
-        monthsSet.add(monthYear);
-    });
-    return Array.from(monthsSet).sort();
+const defaultExpense = () => ({
+    title: "",
+    cost: 0,
+    date: "",
+    category: "Food",
+    type: "One Time",
+    merchant: "",
 });
 
-// Filter expenses by selected month
-const filteredExpenses = computed(() => {
-    if (!filterMonth.value) return expenses.value;
-    return expenses.value.filter(expense => {
-        const date = new Date(expense.date);
-        const expenseMonth = `${String(date.getMonth() + 1).padStart(2, "0")}/${date.getFullYear()}`;
-        return expenseMonth === filterMonth.value;
-    });
-});
+const newExpense = ref(defaultExpense());
 
-// Sort expenses (within filtered list)
+// Open modal for new expense (clear previous inputs)
+const openNewExpenseModal = () => {
+    newExpense.value = defaultExpense();
+    isEditing.value = false;
+    showAddExpenseModal.value = true;
+};
+
+// Find the Correct User Document
+const getUserDocId = async () => {
+    const user = auth.currentUser;
+    if (!user) return null;
+
+    const usersRef = collection(db, "users");
+    const q = query(usersRef, where("uid", "==", user.uid));
+    const querySnapshot = await getDocs(q);
+
+    return !querySnapshot.empty ? querySnapshot.docs[0].id : null;
+};
+
+// Fetch Expenses for Logged-in User
+const fetchExpenses = async () => {
+    const userDocId = await getUserDocId();
+    if (!userDocId) return;
+
+    const expensesRef = collection(db, "users", userDocId, "expenses");
+    const querySnapshot = await getDocs(expensesRef);
+
+    expenses.value = querySnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+};
+
+// Save New Expense
+const saveExpense = async () => {
+    const userDocId = await getUserDocId();
+    if (!userDocId) return;
+
+    const expensesRef = collection(db, "users", userDocId, "expenses");
+    await addDoc(expensesRef, newExpense.value);
+
+    showAddExpenseModal.value = false;
+    fetchExpenses();
+};
+
+// Edit Expense - Load Data into Form
+const editExpense = (expense) => {
+    isEditing.value = true;
+    editingExpenseId.value = expense.id;
+    newExpense.value = { ...expense };
+    showAddExpenseModal.value = true;
+};
+
+// Update Expense
+const updateExpense = async () => {
+    const userDocId = await getUserDocId();
+    if (!userDocId || !editingExpenseId.value) return;
+
+    const expenseRef = doc(db, "users", userDocId, "expenses", editingExpenseId.value);
+    await updateDoc(expenseRef, newExpense.value);
+
+    showAddExpenseModal.value = false;
+    isEditing.value = false;
+    editingExpenseId.value = null;
+    fetchExpenses();
+};
+
+// Delete Expense
+const deleteExpense = async (id) => {
+    const userDocId = await getUserDocId();
+    if (!userDocId) return;
+
+    const expenseRef = doc(db, "users", userDocId, "expenses", id);
+    await deleteDoc(expenseRef);
+    fetchExpenses();
+};
+
+// Sort Expenses
 const sortedExpenses = computed(() => {
-    let sorted = [...filteredExpenses.value];
+    let sorted = [...expenses.value];
     switch (sortBy.value) {
         case "costAsc": return sorted.sort((a, b) => a.cost - b.cost);
         case "costDesc": return sorted.sort((a, b) => b.cost - a.cost);
@@ -105,31 +202,8 @@ const sortedExpenses = computed(() => {
     }
 });
 
-// Fetch Expenses for Logged-in User
-const getUserDocId = async () => {
-    const user = auth.currentUser;
-    if (!user) return null;
-
-    const usersRef = collection(db, "users");
-    const q = query(usersRef, where("uid", "==", user.uid));
-    const querySnapshot = await getDocs(q);
-
-    return !querySnapshot.empty ? querySnapshot.docs[0].id : null;
-};
-
-const fetchExpenses = async () => {
-    const userDocId = await getUserDocId();
-    if (!userDocId) return;
-
-    const expensesRef = collection(db, "users", userDocId, "expenses");
-    const querySnapshot = await getDocs(expensesRef);
-
-    expenses.value = querySnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
-};
-
 onMounted(fetchExpenses);
 </script>
-
 
 <style scoped>
 /* General page styling */
@@ -150,27 +224,6 @@ body, html {
     background-color: bisque;
 }
 
-#title {
-    text-align: center;
-}
-
-/* Controls Section */
-.controls {
-    display: flex;
-    justify-content: center;
-    gap: 10px;
-    margin-bottom: 15px;
-}
-
-/* Dropdown Styling */
-select {
-    padding: 8px;
-    font-size: 14px;
-    border-radius: 5px;
-    border: 1px solid #ccc;
-    background: white;
-}
-
 /* Table styling */
 table {
     width: 100%;
@@ -189,7 +242,6 @@ th, td {
 th {
     background: #e0e0e0;
     font-weight: bold;
-    border-bottom: 1px solid #ddd;
 }
 
 tr:nth-child(even) {
@@ -203,7 +255,6 @@ button {
     border-radius: 5px;
     cursor: pointer;
     font-size: 14px;
-    align-items: center;
 }
 
 button:hover {
