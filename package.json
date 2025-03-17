@@ -9,8 +9,14 @@
     "preview": "vite preview"
   },
   "dependencies": {
+    "@google-cloud/vision": "^4.3.3",
+    "axios": "^1.8.3",
     "chart.js": "^4.4.8",
+    "cors": "^2.8.5",
+    "dotenv": "^16.4.7",
+    "express": "^4.21.2",
     "firebase": "^11.4.0",
+    "multer": "^1.4.5-lts.1",
     "vue": "^3.5.13",
     "vue-chartkick": "^1.1.0",
     "vue-router": "^4.5.0"
@@ -19,5 +25,18 @@
     "@vitejs/plugin-vue": "^5.2.1",
     "vite": "^6.2.1",
     "vite-plugin-vue-devtools": "^7.7.2"
-  }
+  },
+  "description": "This template should help get you started developing with Vue 3 in Vite.",
+  "main": "vite.config.js",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/BT3103AppDev1/l1-finaltermproject-2425s2l1_group_18.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/BT3103AppDev1/l1-finaltermproject-2425s2l1_group_18/issues"
+  },
+  "homepage": "https://github.com/BT3103AppDev1/l1-finaltermproject-2425s2l1_group_18#readme"
 }
