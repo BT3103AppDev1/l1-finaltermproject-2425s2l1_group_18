@@ -1,11 +1,14 @@
 <template>
     <div>
         <Navbar />
-        <div class="container">
+        <div class="content"> <!-- Changed from "container" to "content" to match CSS -->
             <h1>Spending Goals Overview</h1>
             <p>Customize your spending goals for this month.</p>
 
-            <div v-if="loading">Loading...</div>
+            <!-- Loading State -->
+            <div v-if="loading" class="loading-message">Loading...</div>
+
+            <!-- Goals Display -->
             <div v-else class="goal-container">
                 <div v-for="(goal, category) in spendingGoals" :key="category" class="goal">
                     <div class="goal-header">
@@ -13,8 +16,10 @@
                         <p>${{ spending[category] || 0 }} / ${{ goal }}</p>
                     </div>
                     <progress :value="spending[category] || 0" :max="goal"></progress>
-                    <input v-model="spendingGoals[category]" type="number" min="0" />
-                    <button @click="saveGoal(category)">Save</button>
+                    <div class="goal-controls">
+                        <input v-model.number="spendingGoals[category]" type="number" min="0" placeholder="Set goal" />
+                        <button @click="saveGoal(category)">Save</button>
+                    </div>
                 </div>
             </div>
         </div>
@@ -153,17 +158,30 @@ onAuthStateChanged(auth, async (user) => {
 </script>
 
 <style scoped>
-.container {
+/* Ensure navbar does not overlap content */
+.content {
+    margin-top: 80px; /* Adjust based on your navbar height */
     display: flex;
     flex-direction: column;
-    justify-content: center;
-    align-items: center;
-    height: 100vh;
+    justify-content: center; /* Center content vertically */
+    align-items: center; /* Center content horizontally */
+    min-height: calc(100vh - 80px); /* Prevents overflow */
     background-color: rgb(251, 248, 243);
     text-align: center;
 }
 
+/* Center h1 and p */
+h1, p {
+    text-align: center;
+    width: 100%;
+    margin: 0; /* Remove default margins to ensure proper centering */
+}
+
+/* Goal container styling */
 .goal-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center; /* Center goal items horizontally */
     width: 80%;
     max-width: 500px;
     margin-top: 20px;
@@ -171,12 +189,17 @@ onAuthStateChanged(auth, async (user) => {
 
 .goal {
     margin-bottom: 20px;
+    display: flex;
+    flex-direction: column;
+    align-items: center; /* Center goal contents horizontally */
+    width: 100%;
 }
 
 .goal-header {
     display: flex;
     justify-content: space-between;
     align-items: center;
+    width: 100%; /* Ensure goal header spans the full width */
 }
 
 progress {
