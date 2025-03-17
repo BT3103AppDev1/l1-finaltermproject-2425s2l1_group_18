@@ -297,7 +297,7 @@ h2 {
     right: 0;
     max-width: 170px; 
     height: auto;
-    top: -55px; 
+    top: -63px; 
 }
 
 /* Table styling */
@@ -334,7 +334,7 @@ tr.one-time {
 
 .category-badge {
     display: inline-block;
-    padding: 4px 10px;
+    padding: 4px 12px;
     border-radius: 20px;
     font-size: 12px;
     color: black;
@@ -342,12 +342,12 @@ tr.one-time {
     min-width: 80px;
 }
 
-.category-badge.food { background-color: #FFB74D; }       
-.category-badge.transport { background-color: #64B5F6; }  
-.category-badge.shopping { background-color: #F48FB1; }   
-.category-badge.utilities { background-color: #9575CD; }  
-.category-badge.groceries { background-color: #81C784; }  
-.category-badge.others { background-color: #FFD54F; }     
+.category-badge.food { background-color: #ffd089; }       
+.category-badge.transport { background-color: #9ad1ff; }  
+.category-badge.shopping { background-color: #ffb9d0; }   
+.category-badge.utilities { background-color: #d6beff; }  
+.category-badge.groceries { background-color: #83da87; }  
+.category-badge.others { background-color: #ffdd6e; }     
 
 /* Button styling */
 button {
