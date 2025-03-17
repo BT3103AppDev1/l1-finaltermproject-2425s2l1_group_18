@@ -10,15 +10,25 @@
 
             <!-- Goals Display -->
             <div v-else class="goal-container">
+
+                <div class="total-budget">Total Budget: ${{ totalBudget }}</div>
+
                 <div v-for="(goal, category) in spendingGoals" :key="category" class="goal">
                     <div class="goal-header">
                         <h3>{{ category }}</h3>
                         <p>${{ spending[category] || 0 }} / ${{ goal }}</p>
                     </div>
-                    <progress :value="spending[category] || 0" :max="goal"></progress>
+                    <progress
+                    :value="spending[category] || 0"
+                    :max="goal"
+                    :class="getStatusClass(spending[category], goal)"
+                    ></progress>
                     <div class="goal-controls">
                         <input v-model.number="spendingGoals[category]" type="number" min="0" placeholder="Set goal" />
                         <button @click="saveGoal(category)">Save</button>
+                    </div>
+                    <div :class="getStatusClass(spending[category], goal)" class="goal-status">
+                        {{ getStatusMessage(spending[category], goal) }}
                     </div>
                 </div>
             </div>
@@ -27,7 +37,7 @@
 </template>
 
 <script setup>
-import { ref, onMounted } from 'vue';
+import { computed, ref, onMounted } from 'vue';
 import { getAuth, onAuthStateChanged } from 'firebase/auth';
 import { getFirestore, collection, doc, getDocs, query, where, setDoc } from 'firebase/firestore';
 import Navbar from '../components/TheNavbar.vue';
@@ -47,6 +57,23 @@ const defaultGoals = {
     Utilities: 150,
     Groceries: 300,
     Others: 100
+};
+
+//Calculate Total budget
+const totalBudget = computed(() => {
+    return Object.values(spendingGoals.value).reduce((sum, goal) => sum + goal, 0);
+});
+
+const getStatusMessage = (spent, goal) => {
+    if (spent > goal) return "Exceeded Limit! Watch your budget in other areas.";
+    if (spent >= goal * 0.9) return "Near Limit! Watch your spendings.";
+    return "Meeting Expectation! Well done.";
+};
+
+const getStatusClass = (spent, goal) => {
+    if (spent > goal) return "exceeded";
+    if (spent >= goal * 0.9) return "near-limit";
+    return "meeting";
 };
 
 // Get user document ID
@@ -169,6 +196,15 @@ onAuthStateChanged(auth, async (user) => {
     background-color: rgb(251, 248, 243);
     text-align: center;
 }
+.total-budget {
+    background-color: #f8f9fa;
+    padding: 10px 20px;
+    border-radius: 10px;
+    font-size: 18px;
+    font-weight: bold;
+    margin-bottom: 20px;
+    border: 2px solid #ccc;
+}
 
 /* Center h1 and p */
 h1, p {
@@ -207,16 +243,17 @@ progress {
     height: 10px;
     border-radius: 5px;
     appearance: none;
+    background-color: #ddd; /* Fallback background */
 }
 
-progress::-webkit-progress-bar {
-    background-color: #e0e0e0;
-    border-radius: 5px;
+progress.meeting::-webkit-progress-value {
+    background-color: green;
 }
-
-progress::-webkit-progress-value {
-    background-color: #76c7c0;
-    border-radius: 5px;
+progress.near-limit::-webkit-progress-value {
+    background-color: orange;
+}
+progress.exceeded::-webkit-progress-value {
+    background-color: red;
 }
 
 input {
@@ -236,5 +273,17 @@ button {
 
 button:hover {
     background-color: #5aa59a;
+}
+
+.meeting {
+    color: green;
+}
+
+.near-limit {
+    color: orange;
+}
+
+.exceeded {
+    color: red;
 }
 </style>
