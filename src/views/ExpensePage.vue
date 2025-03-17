@@ -32,6 +32,7 @@
                     <option value="alphaAsc">Alphabetical Asc</option>
                     <option value="alphaDesc">Alphabetical Desc</option>
                     <option value="category">Category</option>
+                    <option value="type">Type</option>
                 </select>
             </div>
 
@@ -52,7 +53,11 @@
                         <td>{{ expense.title }}</td>
                         <td>${{ expense.cost.toFixed(2) }}</td>
                         <td>{{ expense.date }}</td>
-                        <td>{{ expense.category }}</td>
+                        <td>
+                            <span :class="['category-badge', expense.category.toLowerCase().replace(/\s+/g, '-')]" >
+                                {{ expense.category }}
+                            </span>
+                        </td>
                         <td>{{ expense.type }}</td>
                         <td>
                             <button class="view-edit-button" @click="editExpense(expense)">View & Edit</button>
@@ -230,6 +235,7 @@ const sortedExpenses = computed(() => {
         case "alphaAsc": return sorted.sort((a, b) => a.title.localeCompare(b.title));
         case "alphaDesc": return sorted.sort((a, b) => b.title.localeCompare(a.title));
         case "category": return sorted.sort((a, b) => a.category.localeCompare(b.category));
+        case "type": return sorted.sort((a, b) => a.type.localeCompare(b.type));
         default: return sorted;
     }
 });
@@ -325,6 +331,23 @@ tr.recurring {
 tr.one-time {
     background-color: #c3ffc3; /* Lime Green */
 }
+
+.category-badge {
+    display: inline-block;
+    padding: 4px 10px;
+    border-radius: 20px;
+    font-size: 12px;
+    color: black;
+    text-align: center;
+    min-width: 80px;
+}
+
+.category-badge.food { background-color: #FFB74D; }       
+.category-badge.transport { background-color: #64B5F6; }  
+.category-badge.shopping { background-color: #F48FB1; }   
+.category-badge.utilities { background-color: #9575CD; }  
+.category-badge.groceries { background-color: #81C784; }  
+.category-badge.others { background-color: #FFD54F; }     
 
 /* Button styling */
 button {
