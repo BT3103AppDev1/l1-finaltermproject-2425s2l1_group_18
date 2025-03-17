@@ -10,14 +10,22 @@
         <router-link to="/goals">Goals</router-link>
         <span class="separator">|</span>
         <button @click="handleSignOut">Sign Out</button>
+
+        <!-- Settings Icon -->
+        <div class="settings-icon">
+            <router-link to="/settings">
+                <img src="../assets/settings-icon.png" alt="Settings Icon" />
+            </router-link>
+        </div>
+
+        <div class="profile-icon">
+            <router-link to="/profile">
+                <img src="../assets/profile-icon.png" alt="Profile Icon" />
+            </router-link>
+        </div>
+
     </nav>
 
-    <!-- Settings Icon -->
-    <div class="settings-icon">
-        <router-link to="/settings">
-            <img src="../assets/settings-icon.png" alt="Settings Icon" />
-        </router-link>
-    </div>
   </div>
 </template>
 
@@ -47,11 +55,11 @@ body, html {
     justify-content: center;
     align-items: center;
     width: 80%;
-    margin: 40px auto;
+    margin: 30px auto;
 }
 
 .navbar {
-    width : 60%;
+    width : 70%;
     display: flex;
     justify-content: space-around;
     align-items: center;
@@ -90,10 +98,34 @@ body, html {
     background-color: rgb(228, 228, 228);
 }
 
+.settings-icon {
+    position: absolute;
+    right: 10px;
+    top: 50%;
+    transform: translateY(-50%);
+}
+
 .settings-icon img {
     width: 30px;
     height: 30px;
     object-fit: contain;
     cursor: pointer;
+    margin-left: 10px;
 }
+
+.profile-icon {
+    position: absolute;
+    right: 100px;
+    top: 50%;
+    transform: translateY(-50%);
+}
+
+.profile-icon img {
+    width: 40px;
+    height: 40px;
+    object-fit: contain;
+    cursor: pointer;
+    margin-left: 10px;
+}
+
 </style>
