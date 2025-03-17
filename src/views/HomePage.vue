@@ -11,11 +11,17 @@
             {{ month }}
           </option>
         </select>
-  
+        
+        <h1> Total budget: {{totalBudget }}</h1> <br>
+
+        <!-- Pie Chart: Total Spent vs. Total Budget -->
+        <h3>Budget Usage</h3>
+        <pie-chart :data="budgetPieChartData" :download="true" :colors="['#ff0000','#008000']"/>
+        <br>
         <!-- Pie Chart: Spending by Category -->
         <h3>Spending by Category</h3>
         <pie-chart :data="pieChartData" :download="true" />
-  
+        <br>
         <!-- Table: Spending Breakdown -->
         <h3>Breakdown by Category</h3>
         <table>
@@ -30,9 +36,13 @@
               <td>{{ category }}</td>
               <td>${{ amount.toFixed(2) }}</td>
             </tr>
+            <tr class="total-row">
+              <td><strong>Total</strong></td>
+              <td><strong>${{ totalExpenses.toFixed(2) }}</strong></td>
+            </tr>
           </tbody>
         </table>
-  
+        <br>
         <!-- Line Chart: Spending Over Time -->
         <h3>Spending Over Time</h3>
         <line-chart :data="lineChartData" :download="true" />
@@ -55,6 +65,7 @@
   
   const pieChartData = ref([]);
   const lineChartData = ref([]);
+  const budgetPieChartData = ref([]);
   const categoryTotals = ref({});
   
   // Get the current user document ID
@@ -85,6 +96,11 @@
     generateAvailableMonths();
     updateCharts();
   };
+
+  //get total expenses
+  const totalExpenses = computed(() => {
+  return Object.values(categoryTotals.value).reduce((sum, val) => sum + val, 0);
+  });
   
   // Generate available months from expenses
   const generateAvailableMonths = () => {
@@ -101,6 +117,27 @@
     if (availableMonths.value.length > 0) {
       selectedMonth.value = availableMonths.value[0]; // Default to latest month
     }
+  };
+
+  const totalBudget = ref(0);
+
+  const fetchTotalBudget = async () => {
+    const userDocId = await getUserDocId();
+    if (!userDocId) return;
+
+    const goalsRef = collection(db, "users", userDocId, "spendingGoals");
+    const querySnapshot = await getDocs(goalsRef);
+
+    let sum = 0;
+    querySnapshot.forEach((doc) => {
+      const data = doc.data();
+      if (data.goal) {
+        sum += data.goal;
+      }
+    });
+
+    totalBudget.value = sum;
+    updateBudgetPieChart();
   };
   
   // Update Pie Chart & Line Chart
@@ -125,7 +162,7 @@
   
     pieChartData.value = Object.entries(categoryData);
     categoryTotals.value = categoryData;
-  
+
     // Aggregate spending by day (for Line Chart)
     const dailyData = {};
     filteredExpenses.forEach(expense => {
@@ -134,9 +171,28 @@
     });
   
     lineChartData.value = Object.entries(dailyData).map(([day, amount]) => [`${selectedMonth.value.split("/")[1]}-${selectedMonth.value.split("/")[0]}-${day}`, amount]).sort((a, b) => new Date(a[0]) - new Date(b[0]));
-  };
   
-  onMounted(fetchExpenses);
+    updateBudgetPieChart();
+  };
+
+  //for the budget pie chart
+  const updateBudgetPieChart = () => {
+      if (totalBudget.value === 0) return; // Avoid division by zero
+
+      const spent = totalExpenses.value;
+      const remaining = Math.max(totalBudget.value - spent, 0); // Ensure non-negative
+
+      budgetPieChartData.value = [
+        ["Spent", spent, "#f44336"], 
+        ["Remaining Budget", remaining, "#4caf50"]
+      ];
+    };
+  
+  
+  onMounted(async () => {
+  await fetchExpenses();
+  await fetchTotalBudget();
+});
   </script>
   
   <style scoped>
@@ -172,6 +228,11 @@
     border: 1px solid #ddd;
     padding: 10px;
     text-align: center;
+  }
+
+  .total-row {
+  background-color: #f0f0f0; /* Light grey */
+  font-weight: bold;
   }
   
   th {
