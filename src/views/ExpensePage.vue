@@ -64,7 +64,7 @@
 
             <!-- Add Expense Button Container -->
             <div class="add-expense-container">
-                <button class="add-expense-btn" @click="showAddExpenseModal = true">Add Expense</button>
+                <button class="add-expense-btn" @click="openAddExpenseModal">Add Expense</button>
             </div>
         </div>
 
@@ -126,6 +126,19 @@ const newExpense = ref({
     merchant: "",
 });
 
+const openAddExpenseModal = () => {
+    newExpense.value = {
+        title: "",
+        cost: 0,
+        date: "",
+        category: "Food",
+        type: "One Time",
+        merchant: "",
+    };
+    isEditing.value = false;
+    showAddExpenseModal.value = true;
+};
+
 // Find the Correct User Document
 const getUserDocId = async () => {
     const user = auth.currentUser;
@@ -166,9 +179,9 @@ const saveExpense = async () => {
 
 // Edit Expense - Load Data into Form
 const editExpense = (expense) => {
+    newExpense.value = { ...expense }; // Copies values properly
     isEditing.value = true;
     editingExpenseId.value = expense.id;
-    newExpense.value = { ...expense };
     showAddExpenseModal.value = true;
 };
 
