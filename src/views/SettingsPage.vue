@@ -5,10 +5,23 @@
             <h2>Settings</h2>
 
             <div class="settings-options">
-                <button @click='showEditUsername = true'>Edit Username</button>
-                <button>Edit Age</button>
-                <button>Edit Gender</button>
-                <button>Edit Savings Target</button>
+                <button @click="showChangePassword = true">Change Password</button>
+                <button @click="showEditUsername = true">Edit Username</button>
+                <button @click="showEditAge = true">Edit Age</button>
+                <button @click="showEditGender = true">Edit Gender</button>
+                <button @click="showEditSavingsTarget = true">Edit Savings Target</button>
+            </div>
+        </div>
+
+        <!-- Password Edit Popup -->
+        <div v-if="showChangePassword" class="modal-overlay">
+            <div class="modal">
+                <h3>Edit Password</h3>
+                <input v-model="newPassword" type="password" placeholder="Enter new password" />
+                <div class="modal-buttons">
+                    <button @click="changePassword">Save</button>
+                    <button @click="showChangePassword = false">Cancel</button>
+                </div>
             </div>
         </div>
 
@@ -23,21 +36,119 @@
                 </div>
             </div>
         </div>
+
+        <!--Age Edit Popup-->
+        <div v-if="showEditAge" class="modal-overlay">
+            <div class="modal">
+                <h3>Edit Age</h3>
+                <input type="number" v-model="newAge" placeholder="Enter your age" />
+                <div class="modal-buttons">
+                    <button @click="updateAge">Save</button>
+                    <button @click="showEditAge = false">Cancel</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Gender Edit Popup -->
+        <div v-if="showEditGender" class="modal-overlay">
+            <div class="modal">
+                <h3>Edit Gender</h3>
+                <select v-model="newGender">
+                    <option value="" disabled>Select your gender</option>
+                    <option value="Male">Male</option>
+                    <option value="Female">Female</option>
+                    <option value="Other">Other</option>
+                </select>
+                <div class="modal-buttons">
+                    <button @click="updateGender">Save</button>
+                    <button @click="showEditGender = false">Cancel</button>
+                </div>
+            </div>
+        </div>
+
+        <!--savingTarget Edit Popup-->
+        <div v-if="showEditSavingsTarget" class="modal-overlay">
+            <div class="modal">
+                <h3>Edit Savings Target</h3>
+                <input v-model="newSavingsTarget" placeholder="Enter new savings target" />
+                <div class="modal-buttons">
+                    <button @click="updateSavingsTarget">Save</button>
+                    <button @click="showEditSavingsTarget = false">Cancel</button>
+                </div>
+            </div>
+        </div>
+
+
     </div>
 </template>
 
 <script setup>
 import { ref } from 'vue';
-import { getAuth, updateProfile } from 'firebase/auth';
+import { getAuth, updateProfile, updateEmail, updatePassword, sendEmailVerification, reload } from 'firebase/auth';
 import { useRouter } from 'vue-router';
 import { getFirestore, doc, updateDoc, query, where, getDocs, collection } from 'firebase/firestore';
 import Navbar from '../components/TheNavbar.vue';
 
 const auth = getAuth();
 const db = getFirestore();
+const showChangePassword = ref(false);
 const showEditUsername = ref(false);
+const showEditAge = ref(false);
+const showEditGender = ref(false);
+const showEditSavingsTarget = ref(false);
+
+const newPassword = ref('');
 const newUsername = ref('');
+const newAge = ref('');
+const newGender = ref('');
+const newSavingsTarget = ref('');
 const router = useRouter();
+
+
+//change password
+const changePassword = async () => {
+    if (!newPassword.value.trim() || newPassword.value.length < 6) {
+        alert('Password must be at least 6 characters long!');
+        return;
+    }
+
+    try {
+        const user = auth.currentUser;
+        if (!user) throw new Error('No user signed in.');
+
+        // Check if the user's email is verified
+        if (!user.emailVerified) {
+            // Send a verification email
+            await sendEmailVerification(user);
+            alert('A verification email has been sent to your email address. Please verify it before changing your password.');
+
+            // Poll for email verification
+            const interval = setInterval(async () => {
+                await reload(user); // Reload the user's authentication state
+                if (user.emailVerified) {
+                    clearInterval(interval); // Stop polling
+                    alert('Your email has been verified! You can now change your password.');
+                }
+            }, 3000); // Check every 3 seconds
+
+            return; // Stop further execution until the email is verified
+        }
+
+        // Update the password
+        await updatePassword(user, newPassword.value);
+
+        alert('Password updated successfully!');
+        showChangePassword.value = false;
+    } catch (error) {
+        console.error('Error updating password:', error);
+
+        if (error.code === 'auth/requires-recent-login') {
+            alert('You need to log in again to change your password.');
+        } else {
+            alert('An error occurred. Please try again.');
+        }
+    }
+};
 
 // update username
 const updateUsername = async() => {
@@ -74,6 +185,72 @@ const updateUsername = async() => {
         alert('An error occurred. Please try again.');
     }
 };
+
+const updateAge = async () => {
+    if (!newAge.value || isNaN(newAge.value) || newAge.value <= 0) {
+        alert('Please enter a valid age');
+        return;
+    }
+
+    try {
+        const user = auth.currentUser;
+        if (!user) throw new Error('No user signed in.');
+
+        const userDoc = doc(db, 'users', user.uid);
+        await updateDoc(userDoc, { age: parseInt(newAge.value) });
+
+        alert('Age updated successfully!');
+        showEditAge.value = false;
+    } catch (error) {
+        console.error('Error updating age:', error);
+        alert('An error occurred. Please try again.');
+    }
+};
+
+const updateGender = async () => {
+    if (!newGender.value.trim()) {
+        alert('Please select a gender');
+        return;
+    }
+
+    try {
+        const user = auth.currentUser;
+        if (!user) throw new Error('No user signed in.');
+
+        const userDoc = doc(db, 'users', user.uid);
+        await updateDoc(userDoc, { gender: newGender.value });
+
+        alert('Gender updated successfully!');
+        showEditGender.value = false;
+    } catch (error) {
+        console.error('Error updating gender:', error);
+        alert('An error occurred. Please try again.');
+    }
+};
+
+// update username
+const updateSavingsTarget = async() => {
+    if (!newSavingsTarget.value || isNaN(newSavingsTarget.value) || newSavingsTarget.value <= 0) {
+    alert('Please enter a valid savings target');
+    return;
+}
+
+    try {
+        const user = auth.currentUser;
+        if (!user) throw new Error('No user signed in.');
+
+        //update firestore
+        const userDoc = doc(db, 'users', user.uid);
+        await updateDoc(userDoc, { savingTarget: newSavingsTarget.value });
+
+        alert('Savings Target updated successfully!');
+        showEditSavingsTarget.value = false;
+    } catch (error) {
+        console.error('Error updating savings target:', error);
+        alert('An error occurred. Please try again.');
+    }
+};
+
 </script>
 
 <style scoped>
