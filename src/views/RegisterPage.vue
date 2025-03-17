@@ -19,7 +19,7 @@ import { ref } from 'vue';
 import { getAuth, createUserWithEmailAndPassword } from 'firebase/auth';
 import { useRouter } from 'vue-router';
 import { db } from '../main.js';
-import { collection, addDoc, query, where, getDocs } from 'firebase/firestore';
+import { collection, addDoc, query, where, getDocs, setDoc, doc } from 'firebase/firestore';
 
 const email = ref('');
 const password = ref('');
@@ -49,8 +49,9 @@ const register = async () => {
     try {
         const userCredential = await createUserWithEmailAndPassword(getAuth(), email.value, password.value);
         const user = userCredential.user;
+        const userDocRef = doc(db, "users", user.uid);
 
-        await addDoc(collection(db, "users"), {
+        await setDoc(userDocRef, {
             uid: user.uid,
             username: username.value,
             email: email.value,
