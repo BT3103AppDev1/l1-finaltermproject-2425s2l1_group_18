@@ -115,7 +115,7 @@ body, html {
 
 .profile-icon {
     position: absolute;
-    right: 100px;
+    right: 50px;
     top: 50%;
     transform: translateY(-50%);
 }
