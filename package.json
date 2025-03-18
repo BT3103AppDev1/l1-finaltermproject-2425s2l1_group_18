@@ -9,6 +9,7 @@
     "preview": "vite preview"
   },
   "dependencies": {
+    "@google-cloud/secret-manager": "^6.0.0",
     "@google-cloud/vision": "^4.3.3",
     "axios": "^1.8.3",
     "chart.js": "^4.4.8",
