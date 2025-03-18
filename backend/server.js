@@ -3,15 +3,35 @@ import multer from "multer";
 import cors from "cors";
 import dotenv from "dotenv";
 import vision from "@google-cloud/vision";
+import { SecretManagerServiceClient } from "@google-cloud/secret-manager";
 
 dotenv.config();
 
 const app = express();
 const upload = multer({ storage: multer.memoryStorage() });
 
-const client = new vision.ImageAnnotatorClient({
-  keyFilename: process.env.GOOGLE_APPLICATION_CREDENTIALS,
-});
+// 🔹 Function to retrieve credentials from Secret Manager
+async function getCredentials() {
+  const client = new SecretManagerServiceClient();
+  const [version] = await client.accessSecretVersion({
+    name: "projects/finbonacci/secrets/RECEIPT_SCANNER_KEY/versions/latest",
+  });
+  return JSON.parse(version.payload.data.toString());
+}
+
+// 🔹 Initialize Google Vision API Client with Secret Manager credentials
+let client;
+async function initializeVisionClient() {
+  try {
+    const credentials = await getCredentials();
+    client = new vision.ImageAnnotatorClient({ credentials });
+    console.log("✅ Google Vision Client initialized");
+  } catch (error) {
+    console.error("❌ Failed to initialize Vision API Client:", error);
+  }
+}
+
+initializeVisionClient();
 
 app.use(cors());
 app.use(express.json());
@@ -22,8 +42,12 @@ app.post("/api/scan-receipt", upload.single("file"), async (req, res) => {
       return res.status(400).json({ error: "No file uploaded" });
     }
 
-    // don't remove logged statements, can see terminal how it scans the receipt
-    // send the image to Google Cloud Vision!
+    // Ensure Vision API client is initialized
+    if (!client) {
+      return res.status(500).json({ error: "Vision API client not initialized yet" });
+    }
+
+    // Send the image to Google Cloud Vision
     const [result] = await client.textDetection(req.file.buffer);
     const detections = result.textAnnotations;
 
@@ -34,7 +58,7 @@ app.post("/api/scan-receipt", upload.single("file"), async (req, res) => {
     const extractedText = detections[0].description;
     console.log("Raw OCR Text:", extractedText); // Debugging
 
-    // processes OCR result to extract structured data
+    // Process OCR result to extract structured data
     const structuredData = extractReceiptData(extractedText);
 
     res.json(structuredData);
@@ -44,7 +68,7 @@ app.post("/api/scan-receipt", upload.single("file"), async (req, res) => {
   }
 });
 
-// Function to extract structured receipt data
+// 🔹 Function to extract structured receipt data
 function extractReceiptData(text) {
   const lines = text.split("\n");
 
@@ -117,7 +141,7 @@ function extractReceiptData(text) {
     }
   }
 
-  // to assign prices to items in order (skipping total)
+  // Assign prices to items in order (skipping total)
   let priceIndex = 0;
   for (let i = 0; i < detectedItems.length; i++) {
     if (!detectedItems[i].price) {
@@ -130,7 +154,7 @@ function extractReceiptData(text) {
     }
   }
 
-  // to ensure that the last detected price is stored as total (not as an item price)
+  // Ensure the last detected price is stored as total (not as an item price)
   if (detectedPrices.length > 0) {
     total = detectedPrices.pop(); // Last price is set as the total
   }
