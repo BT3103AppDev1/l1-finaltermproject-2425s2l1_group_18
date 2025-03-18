@@ -18,7 +18,7 @@ cd backend
 node server.js
 
 # Start the frontend
-cd frontend
+cd l1-finaltermproject-2425s2l1_group_18
 npm run dev
 
  
