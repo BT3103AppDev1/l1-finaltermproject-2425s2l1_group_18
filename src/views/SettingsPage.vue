@@ -29,6 +29,7 @@
         <div v-if="showEditUsername" class="modal-overlay">
             <div class="modal">
                 <h3>Edit Username</h3>
+                <p>Current Username: <strong>{{ currentUsername }}</strong></p>
                 <input v-model="newUsername" placeholder="Enter new username" />
                 <div class="modal-buttons">
                     <button @click="updateUsername">Save</button>
@@ -41,6 +42,7 @@
         <div v-if="showEditAge" class="modal-overlay">
             <div class="modal">
                 <h3>Edit Age</h3>
+                <p>Current Age: <strong>{{ currentAge }}</strong></p>
                 <input type="number" v-model="newAge" placeholder="Enter your age" />
                 <div class="modal-buttons">
                     <button @click="updateAge">Save</button>
@@ -53,6 +55,7 @@
         <div v-if="showEditGender" class="modal-overlay">
             <div class="modal">
                 <h3>Edit Gender</h3>
+                <p>Current Gender: <strong>{{ currentGender }}</strong></p>
                 <select v-model="newGender">
                     <option value="" disabled>Select your gender</option>
                     <option value="Male">Male</option>
@@ -70,6 +73,7 @@
         <div v-if="showEditSavingsTarget" class="modal-overlay">
             <div class="modal">
                 <h3>Edit Savings Target</h3>
+                <p>Current Savings Target: <strong>{{ currentSavingsTarget }}</strong></p>
                 <input v-model="newSavingsTarget" placeholder="Enter new savings target" />
                 <div class="modal-buttons">
                     <button @click="updateSavingsTarget">Save</button>
@@ -83,10 +87,10 @@
 </template>
 
 <script setup>
-import { ref } from 'vue';
+import { ref, onMounted } from 'vue';
 import { getAuth, updateProfile, updateEmail, updatePassword, sendEmailVerification, reload } from 'firebase/auth';
 import { useRouter } from 'vue-router';
-import { getFirestore, doc, updateDoc, query, where, getDocs, collection } from 'firebase/firestore';
+import { getFirestore, doc, updateDoc, query, where, getDocs, collection, getDoc } from 'firebase/firestore';
 import Navbar from '../components/TheNavbar.vue';
 
 const auth = getAuth();
@@ -97,6 +101,12 @@ const showEditAge = ref(false);
 const showEditGender = ref(false);
 const showEditSavingsTarget = ref(false);
 
+// Reactive variables for user data
+const currentUsername = ref('');
+const currentAge = ref('');
+const currentGender = ref('');
+const currentSavingsTarget = ref('');
+
 const newPassword = ref('');
 const newUsername = ref('');
 const newAge = ref('');
@@ -104,6 +114,36 @@ const newGender = ref('');
 const newSavingsTarget = ref('');
 const router = useRouter();
 
+// Fetch user data on page load
+onMounted(async () => {
+    try {
+        console.log('Fetching user data...');
+        const user = auth.currentUser;
+        if (!user) {
+            console.error('No user signed in.');
+            return;
+        }
+
+        console.log('User signed in:', user.uid);
+
+        const userDoc = doc(db, 'users', user.uid);
+        const userSnapshot = await getDoc(userDoc);
+
+        if (userSnapshot.exists()) {
+            const userData = userSnapshot.data();
+            console.log('User data fetched:', userData);
+
+            currentUsername.value = userData.username || '';
+            currentAge.value = userData.age || '';
+            currentGender.value = userData.gender || '';
+            currentSavingsTarget.value = userData.savingTarget || '';
+        } else {
+            console.error('User document does not exist.');
+        }
+    } catch (error) {
+        console.error('Error fetching user data:', error);
+    }
+});
 
 //change password
 const changePassword = async () => {
