@@ -95,10 +95,13 @@
                 </select>
                 <input v-model="newExpense.merchant" placeholder="Merchant" />
 
-                <button @click="isEditing ? updateExpense() : saveExpense()">
-                    {{ isEditing ? 'Update Expense' : 'Save Expense' }}
-                </button>
-                <button @click="showAddExpenseModal = false">Cancel</button>
+                <div class="modal-button-group">
+                    <button @click="isEditing ? updateExpense() : saveExpense()">
+                        {{ isEditing ? 'Update Expense' : 'Save Expense' }}
+                    </button>
+                    <button @click="showAddExpenseModal = false" class="cancel-button">Cancel</button>
+                </div>
+
             </div>
         </div>
     </div>
@@ -134,7 +137,7 @@ const newExpense = ref({
 const openAddExpenseModal = () => {
     newExpense.value = {
         title: "",
-        cost: 0,
+        cost: "",
         date: "",
         category: "Food",
         type: "One Time",
@@ -441,11 +444,45 @@ select {
 
 .modal-content input, .modal-content select {
     width: 100%;
-    padding: 8px;
+    padding: 8px 12px;
     margin: 10px 0;
     border: 1px solid #ccc;
     border-radius: 5px;
+    box-sizing: border-box;
 }
+.modal-content {
+    text-align: center;
+}
+
+.modal-content button {
+    padding: 6px 8px;
+    font-size: 12px;
+    border-radius: 25px;
+    margin-top: 10px;
+    margin-right: 8px;
+}
+
+.modal-button-group {
+    display: flex;
+    flex-direction: column;
+    gap: 4px; /* space between Save and Cancel buttons */
+    margin-top: 10px;
+    align-items: center;
+}
+
+.modal-button-group button {
+    padding: 6px 8px;
+    font-size: 11px;
+    border-radius: 25px;
+    width: 30%;
+    background-color: #e5e4e4;
+}
+
+.modal-button-group .cancel-button {
+    background-color: #f8dcdc;
+    color: black;
+}
+
 
 /* Dropdown alignment */
 .sort-container {
