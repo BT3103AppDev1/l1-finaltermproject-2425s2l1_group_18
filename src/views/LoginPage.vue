@@ -8,6 +8,7 @@
         <p v-if="errMsg" class="error">{{ errMsg }}</p>
         <p><button @click="login">Sign In</button></p>
         <p><button class="register-btn" @click="goToRegister">Register</button></p>
+        <p><button class="register-btn" @click="goToFARegister">Register as FA</button></p>
     </div>
 </template>
 
@@ -48,7 +49,12 @@ const login = async () => {
 const goToRegister = () => {
     router.push('/register');
 };
+
+const goToFARegister = () => {
+    router.push('/faregister');
+};
 </script>
+
 
 <style scoped>
 .container {

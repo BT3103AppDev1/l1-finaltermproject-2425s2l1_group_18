@@ -1,12 +1,13 @@
 <template>
     <div class="container">
-        <h1>Register as a Normal User</h1>
+        <h1>Register as a Financial Advisor</h1>
         <p><input type="text" placeholder="Username" v-model="username"></p>
         <p v-if="usernameError" class="error">{{ usernameError }}</p>
         <p><input type="text" placeholder="Email" v-model="email"></p>
         <p v-if="emailError" class="error">{{ emailError }}</p>
         <p><input type="password" placeholder="Password" v-model="password"></p>
-        <p><input type="number" placeholder="Monthly Saving Target" v-model="savingTarget"></p>
+        <p><input type="text" placeholder="Company" v-model="company"></p>
+        <p><input type="text" placeholder="Registration Number" v-model="regNumber"></p>
         <p>
             <button @click="register">Register</button>
             <button class="back-btn" @click="goToLogin">Back to Login</button>
@@ -24,7 +25,8 @@ import { collection, addDoc, query, where, getDocs, setDoc, doc } from 'firebase
 const email = ref('');
 const password = ref('');
 const username = ref('');
-const savingTarget = ref('');
+const company = ref('');
+const regNumber = ref('');
 const usernameError = ref('');
 const emailError = ref('');
 const router = useRouter();
@@ -55,8 +57,9 @@ const register = async () => {
             uid: user.uid,
             username: username.value,
             email: email.value,
-            savingTarget: parseFloat(savingTarget.value),
-            role: "User",
+            company: company.value,
+            regNumber: regNumber.value,
+            role: "FA",
         });
         alert("User registered successfully!");
         router.push('/home');  // Redirect to home after successful registration
