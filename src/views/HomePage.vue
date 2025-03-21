@@ -2,56 +2,83 @@
   <div>
     <Navbar />
     <div class="container">
-      <h2>Expense Analytics</h2>
+      <div v-if="userProfile.role === 'FA'"><h2>Client Analytics</h2></div>
+      <div v-else><h2>Expense Analytics</h2></div>
 
-      <!-- Month Selector -->
-      <label>Select Month:</label>
-      <select v-model="selectedMonth" @change="updateCharts">
-        <option v-for="month in availableMonths" :key="month" :value="month">
-          {{ month }}
-        </option>
-      </select>
-      
-      <h1> Total budget: {{totalBudget }}</h1> <br>
-
-      <!-- Pie Charts Container -->
-      <div class="charts-container">
-        <!-- Pie Chart: Total Spent vs. Total Budget -->
-        <div class="chart">
-          <h3>Budget Usage</h3>
-          <pie-chart :data="budgetPieChartData" :download="true" :colors="['#ff0000','#008000']"/>
-        </div>
-        <!-- Pie Chart: Spending by Category -->
-        <div class="chart">
-          <h3>Spending by Category</h3>
-          <pie-chart :data="pieChartData" :download="true" />
-        </div>
+      <div v-if="userProfile.role === 'FA'">
+        <p>More Updates Soon</p>
       </div>
+      
+      <div v-else>
+        <!-- Month Selector -->
+        <label>Select Month:</label>
+        <select v-model="selectedMonth" @change="updateCharts">
+          <option v-for="month in availableMonths" :key="month" :value="month">
+            {{ month }}
+          </option>
+        </select>
+        
+        <h1> Total budget: {{totalBudget }}</h1> <br>
 
-      <!-- Table: Spending Breakdown -->
-      <h3>Breakdown by Category</h3>
-      <table>
-        <thead>
-          <tr>
-            <th>Category</th>
-            <th>Amount ($)</th>
-          </tr>
-        </thead>
-        <tbody>
-          <tr v-for="(amount, category) in categoryTotals" :key="category">
-            <td>{{ category }}</td>
-            <td>${{ amount.toFixed(2) }}</td>
-          </tr>
-          <tr class="total-row">
-            <td><strong>Total</strong></td>
-            <td><strong>${{ totalExpenses.toFixed(2) }}</strong></td>
-          </tr>
-        </tbody>
-      </table>
-      <br>
-      <!-- Line Chart: Spending Over Time -->
-      <h3>Spending Over Time</h3>
-      <line-chart :data="lineChartData" :download="true" />
+        <!-- Pie Charts Container -->
+        <div class="charts-container">
+          <!-- Pie Chart: Total Spent vs. Total Budget -->
+          <div class="chart">
+            <h3>Budget Usage</h3>
+            <pie-chart :data="budgetPieChartData" :download="true" :colors="['#ff0000','#008000']"/>
+          </div>
+          <!-- Pie Chart: Spending by Category -->
+          <div class="chart">
+            <h3>Spending by Category</h3>
+            <pie-chart :data="pieChartData" :download="true" />
+          </div>
+        </div>
+
+        <!-- Table: Budget Summary -->
+        <h3>Budget Summary</h3>
+        <table>
+          <tbody>
+            <tr>
+              <th>Total Budget ($):</th>
+              <td>${{ totalBudget.toFixed(2) }}</td>
+            </tr>
+            <tr>
+              <th>Spent Amount ($):</th>
+              <td>${{ totalExpenses.toFixed(2) }}</td>
+            </tr>
+            <tr>
+              <th>Remaining Balance ($):</th>
+              <td>${{ (totalBudget - totalExpenses).toFixed(2) }}</td>
+            </tr>
+          </tbody>
+        </table>
+        <br>
+
+        <!-- Table: Spending Breakdown -->
+        <h3>Breakdown by Category</h3>
+        <table>
+          <thead>
+            <tr>
+              <th>Category</th>
+              <th>Amount ($)</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr v-for="(amount, category) in categoryTotals" :key="category">
+              <td>{{ category }}</td>
+              <td>${{ amount.toFixed(2) }}</td>
+            </tr>
+            <tr class="total-row">
+              <td><strong>Total</strong></td>
+              <td><strong>${{ totalExpenses.toFixed(2) }}</strong></td>
+            </tr>
+          </tbody>
+        </table>
+        <br>
+        <!-- Line Chart: Spending Over Time -->
+        <h3>Spending Over Time</h3>
+        <line-chart :data="lineChartData" :download="true" />
+      </div>
     </div>
   </div>
 </template>
@@ -74,6 +101,8 @@ const lineChartData = ref([]);
 const budgetPieChartData = ref([]);
 const categoryTotals = ref({});
 
+const userProfile = ref({});
+
 // Get the current user document ID
 const getUserDocId = async () => {
   const user = auth.currentUser;
@@ -83,7 +112,12 @@ const getUserDocId = async () => {
   const q = query(usersRef, where("uid", "==", user.uid));
   const querySnapshot = await getDocs(q);
 
-  return !querySnapshot.empty ? querySnapshot.docs[0].id : null;
+  if (!querySnapshot.empty) {
+    const userDoc = querySnapshot.docs[0];
+    userProfile.value = userDoc.data();
+    return userDoc.id;
+  }
+  return null;
 };
 
 // Fetch expenses for logged-in user
@@ -232,7 +266,7 @@ table {
 th, td {
   border: 1px solid #ddd;
   padding: 10px;
-  text-align: center;
+  text-align: left;
 }
 
 .total-row {
@@ -244,7 +278,13 @@ th {
   background-color: #e0e0e0;
   font-weight: bold;
 }
+th {
+  width: 50%; /* Adjust the width of the first column */
+}
 
+td {
+  width: 50%; /* Adjust the width of the second column */
+}
 /* Dropdown styling */
 select {
   margin-bottom: 15px;

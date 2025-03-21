@@ -1,5 +1,5 @@
 <template>
-    <div class = "settings-page">
+    <div class="settings-page">
         <Navbar />
         <div class="settings-container">
             <h2>Settings</h2>
@@ -9,7 +9,10 @@
                 <button @click="showEditUsername = true">Edit Username</button>
                 <button @click="showEditAge = true">Edit Age</button>
                 <button @click="showEditGender = true">Edit Gender</button>
-                <button @click="showEditSavingsTarget = true">Edit Savings Target</button>
+                <button v-if="userProfile.role === 'FA'" @click="showEditRepNumber = true">Edit Representative Number</button>
+                <button v-if="userProfile.role === 'FA'" @click="showEditAbout = true">Edit About</button>
+                <button v-if="userProfile.role === 'FA'" @click="showEditCompany = true">Edit Company</button>
+                <button v-else @click="showEditSavingsTarget = true">Edit Savings Target</button>
             </div>
         </div>
 
@@ -25,7 +28,7 @@
             </div>
         </div>
 
-        <!--Username Edit Popup-->
+        <!-- Username Edit Popup -->
         <div v-if="showEditUsername" class="modal-overlay">
             <div class="modal">
                 <h3>Edit Username</h3>
@@ -38,7 +41,7 @@
             </div>
         </div>
 
-        <!--Age Edit Popup-->
+        <!-- Age Edit Popup -->
         <div v-if="showEditAge" class="modal-overlay">
             <div class="modal">
                 <h3>Edit Age</h3>
@@ -69,7 +72,46 @@
             </div>
         </div>
 
-        <!--savingTarget Edit Popup-->
+        <!-- Representative Number Edit Popup -->
+        <div v-if="showEditRepNumber" class="modal-overlay">
+            <div class="modal">
+                <h3>Edit Representative Number</h3>
+                <p>Current Representative Number: <strong>{{ currentRepNumber }}</strong></p>
+                <input v-model="newRepNumber" placeholder="Enter new representative number" />
+                <div class="modal-buttons">
+                    <button @click="updateRepNumber">Save</button>
+                    <button @click="showEditRepNumber = false">Cancel</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- About Edit Popup -->
+        <div v-if="showEditAbout" class="modal-overlay">
+            <div class="modal">
+                <h3>Edit About</h3>
+                <p>Current About: <strong>{{ currentAbout }}</strong></p>
+                <textarea v-model="newAbout" placeholder="Enter new about"></textarea>
+                <div class="modal-buttons">
+                    <button @click="updateAbout">Save</button>
+                    <button @click="showEditAbout = false">Cancel</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Company Edit Popup -->
+        <div v-if="showEditCompany" class="modal-overlay">
+            <div class="modal">
+                <h3>Edit Company</h3>
+                <p>Current Company: <strong>{{ currentCompany }}</strong></p>
+                <input v-model="newCompany" placeholder="Enter new company" />
+                <div class="modal-buttons">
+                    <button @click="updateCompany">Save</button>
+                    <button @click="showEditCompany = false">Cancel</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Savings Target Edit Popup -->
         <div v-if="showEditSavingsTarget" class="modal-overlay">
             <div class="modal">
                 <h3>Edit Savings Target</h3>
@@ -81,8 +123,6 @@
                 </div>
             </div>
         </div>
-
-
     </div>
 </template>
 
@@ -99,19 +139,29 @@ const showChangePassword = ref(false);
 const showEditUsername = ref(false);
 const showEditAge = ref(false);
 const showEditGender = ref(false);
+const showEditRepNumber = ref(false);
+const showEditAbout = ref(false);
+const showEditCompany = ref(false);
 const showEditSavingsTarget = ref(false);
 
 // Reactive variables for user data
 const currentUsername = ref('');
 const currentAge = ref('');
 const currentGender = ref('');
+const currentRepNumber = ref('');
+const currentAbout = ref('');
+const currentCompany = ref('');
 const currentSavingsTarget = ref('');
 
 const newPassword = ref('');
 const newUsername = ref('');
 const newAge = ref('');
 const newGender = ref('');
+const newRepNumber = ref('');
+const newAbout = ref('');
+const newCompany = ref('');
 const newSavingsTarget = ref('');
+const userProfile = ref({});
 const router = useRouter();
 
 // Fetch user data on page load
@@ -133,9 +183,13 @@ onMounted(async () => {
             const userData = userSnapshot.data();
             console.log('User data fetched:', userData);
 
+            userProfile.value = userData;
             currentUsername.value = userData.username || '';
             currentAge.value = userData.age || '';
             currentGender.value = userData.gender || '';
+            currentRepNumber.value = userData.representativeNumber || '';
+            currentAbout.value = userData.about || '';
+            currentCompany.value = userData.company || '';
             currentSavingsTarget.value = userData.savingTarget || '';
         } else {
             console.error('User document does not exist.');
@@ -145,7 +199,7 @@ onMounted(async () => {
     }
 });
 
-//change password
+// Change password
 const changePassword = async () => {
     if (!newPassword.value.trim() || newPassword.value.length < 6) {
         alert('Password must be at least 6 characters long!');
@@ -190,8 +244,8 @@ const changePassword = async () => {
     }
 };
 
-// update username
-const updateUsername = async() => {
+// Update username
+const updateUsername = async () => {
     if (!newUsername.value.trim()) {
         alert('Username cannot be empty');
         return;
@@ -201,7 +255,7 @@ const updateUsername = async() => {
         const user = auth.currentUser;
         if (!user) throw new Error('No user signed in.');
 
-        //check if the username is already taken
+        // Check if the username is already taken
         const usersRef = collection(db, 'users');
         const q = query(usersRef, where('username', '==', newUsername.value));
         const querySnapshot = await getDocs(q);
@@ -211,10 +265,10 @@ const updateUsername = async() => {
             return;
         }
 
-        //update auth profile
-        await updateProfile(user, {displayName: newUsername.value });
+        // Update auth profile
+        await updateProfile(user, { displayName: newUsername.value });
 
-        //update firestore
+        // Update Firestore
         const userDoc = doc(db, 'users', user.uid);
         await updateDoc(userDoc, { username: newUsername.value });
 
@@ -268,18 +322,81 @@ const updateGender = async () => {
     }
 };
 
-// update username
-const updateSavingsTarget = async() => {
-    if (!newSavingsTarget.value || isNaN(newSavingsTarget.value) || newSavingsTarget.value <= 0) {
-    alert('Please enter a valid savings target');
-    return;
-}
+const updateRepNumber = async () => {
+    if (!newRepNumber.value.trim()) {
+        alert('Representative number cannot be empty');
+        return;
+    }
 
     try {
         const user = auth.currentUser;
         if (!user) throw new Error('No user signed in.');
 
-        //update firestore
+        const userDoc = doc(db, 'users', user.uid);
+        await updateDoc(userDoc, { representativeNumber: newRepNumber.value });
+
+        alert('Representative number updated successfully!');
+        showEditRepNumber.value = false;
+    } catch (error) {
+        console.error('Error updating representative number:', error);
+        alert('An error occurred. Please try again.');
+    }
+};
+
+const updateAbout = async () => {
+    if (!newAbout.value.trim()) {
+        alert('About cannot be empty');
+        return;
+    }
+
+    try {
+        const user = auth.currentUser;
+        if (!user) throw new Error('No user signed in.');
+
+        const userDoc = doc(db, 'users', user.uid);
+        await updateDoc(userDoc, { about: newAbout.value });
+
+        alert('About updated successfully!');
+        showEditAbout.value = false;
+    } catch (error) {
+        console.error('Error updating about:', error);
+        alert('An error occurred. Please try again.');
+    }
+};
+
+const updateCompany = async () => {
+    if (!newCompany.value.trim()) {
+        alert('Company cannot be empty');
+        return;
+    }
+
+    try {
+        const user = auth.currentUser;
+        if (!user) throw new Error('No user signed in.');
+
+        const userDoc = doc(db, 'users', user.uid);
+        await updateDoc(userDoc, { company: newCompany.value });
+
+        alert('Company updated successfully!');
+        showEditCompany.value = false;
+    } catch (error) {
+        console.error('Error updating company:', error);
+        alert('An error occurred. Please try again.');
+    }
+};
+
+// Update savings target
+const updateSavingsTarget = async () => {
+    if (!newSavingsTarget.value || isNaN(newSavingsTarget.value) || newSavingsTarget.value <= 0) {
+        alert('Please enter a valid savings target');
+        return;
+    }
+
+    try {
+        const user = auth.currentUser;
+        if (!user) throw new Error('No user signed in.');
+
+        // Update Firestore
         const userDoc = doc(db, 'users', user.uid);
         await updateDoc(userDoc, { savingTarget: newSavingsTarget.value });
 
@@ -290,7 +407,6 @@ const updateSavingsTarget = async() => {
         alert('An error occurred. Please try again.');
     }
 };
-
 </script>
 
 <style scoped>
@@ -363,7 +479,7 @@ button:hover {
     justify-content: center;
 }
 
-.modal input {
+.modal input, .modal textarea, .modal select {
     width: 100%;
     padding: 10px;
     margin: 10px 0;
