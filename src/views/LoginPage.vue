@@ -7,8 +7,10 @@
         <p><input type="password" placeholder="Password" v-model="password"></p>
         <p v-if="errMsg" class="error">{{ errMsg }}</p>
         <p><button @click="login">Sign In</button></p>
-        <p><button class="register-btn" @click="goToRegister">Register</button></p>
-        <p><button class="register-btn" @click="goToFARegister">Register as FA</button></p>
+        <p class="button-group">
+            <button class="register-btn" @click="goToRegister">Register as new user</button>
+            <button class="register-btn" @click="goToFARegister">Register as FA</button>
+        </p>
     </div>
 </template>
 
@@ -89,6 +91,15 @@ button {
 
 button:hover {
     background-color: #0056b3;
+}
+
+.button-group {
+    display: flex;
+    gap: 20px;
+}
+
+.button-group button {
+    flex: 1; 
 }
 
 .error {
