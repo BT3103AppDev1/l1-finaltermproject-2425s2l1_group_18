@@ -3,10 +3,14 @@
         <img src="../assets/finbonacci_logo.png" alt="Finbonacci Logo" width="200">
         <h2>Login</h2>
         <h3>Take control of your financial future with us – smart tracking, powerful insights, and expert advice, all in one place!</h3>
-        <p><input type="text" placeholder="Email" v-model="loginInput"></p>
-        <p><input type="password" placeholder="Password" v-model="password"></p>
-        <p v-if="errMsg" class="error">{{ errMsg }}</p>
-        <p><button @click="login">Sign In</button></p>
+
+        <form @submit.prevent="login">
+            <p><input type="text" placeholder="Email" v-model="loginInput"></p>
+            <p><input type="password" placeholder="Password" v-model="password"></p>
+            <p v-if="errMsg" class="error">{{ errMsg }}</p>
+            <p><button type="submit">Sign In</button></p>
+        </form>
+
         <p class="button-group">
             <button class="register-btn" @click="goToRegister">Register as new user</button>
             <button class="register-btn" @click="goToFARegister">Register as FA</button>
@@ -18,8 +22,6 @@
 import { ref } from 'vue';
 import { getAuth, signInWithEmailAndPassword } from 'firebase/auth';
 import { useRouter } from 'vue-router';
-import { db } from '../main.js';
-import { collection, query, where, getDocs } from 'firebase/firestore';
 
 const loginInput = ref('');
 const password = ref('');
