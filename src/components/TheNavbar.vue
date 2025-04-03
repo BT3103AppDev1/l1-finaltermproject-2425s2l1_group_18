@@ -5,13 +5,15 @@
 
             <template v-if="userRole === 'User'">
                 <span class="separator">|</span>
-                <router-link to="/find-fa">Find FA</router-link>
-                <span class="separator">|</span>
                 <router-link to="/uploads">Uploads</router-link>
                 <span class="separator">|</span>
                 <router-link to="/expenses">Expenses</router-link>
                 <span class="separator">|</span>
                 <router-link to="/goals">Goals</router-link>
+                <span class="separator">|</span>
+                <router-link to="/fa-info">FA Info</router-link>
+                <span class="separator">|</span>
+                <router-link to="/find-fa">Find FA</router-link>
             </template>
 
             <template v-if="userRole === 'FA'">
@@ -90,7 +92,7 @@ body, html {
     display: flex;
     justify-content: space-around;
     align-items: center;
-    width: 70%;
+    width: 75%;
     padding: 10px 10px;
     background-color: rgb(251, 248, 243);
     border-radius: 18px;
@@ -99,7 +101,7 @@ body, html {
 }
 
 .fa-navbar {
-    width: 25%; /* Adjust the width for FA users */
+    width: 40%; /* Adjust the width for FA users */
     justify-content: center;
     gap: 20px;
 }

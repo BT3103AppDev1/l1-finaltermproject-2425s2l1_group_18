@@ -14,6 +14,7 @@ const routes = [
     { path: "/profile", component: () => import("../views/ProfilePage.vue"), meta: { requiresAuth: true } },
     { path: "/find-fa", component: () => import("../views/FindFA.vue"), meta: { requiresAuth: true, role: 'User' } },
     { path: "/find-client", component: () => import("../views/FindClient.vue"), meta: { requiresAuth: true, role: 'FA' } },
+    { path: "/fa-info", component: () => import("../views/FAInfo.vue"), meta: { requiresAuth: true, role: 'User' } },
 ];
 
 const router = createRouter({
