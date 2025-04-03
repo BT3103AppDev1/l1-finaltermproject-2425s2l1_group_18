@@ -11,7 +11,9 @@ const routes = [
     { path: "/expenses", component: () => import("../views/ExpensePage.vue"), meta: { requiresAuth: true, role: "User" } },
     { path: "/goals", component: () => import("../views/GoalsPage.vue"), meta: { requiresAuth: true, role: "User" } },
     { path: "/settings", component: () => import("../views/SettingsPage.vue"), meta: { requiresAuth: true } },
-    { path: "/profile", component: () => import("../views/ProfilePage.vue"), meta: { requiresAuth: true } }
+    { path: "/profile", component: () => import("../views/ProfilePage.vue"), meta: { requiresAuth: true } },
+    { path: "/find-fa", component: () => import("../views/FindFA.vue"), meta: { requiresAuth: true, role: 'User' } },
+    { path: "/find-client", component: () => import("../views/FindClient.vue"), meta: { requiresAuth: true, role: 'FA' } },
 ];
 
 const router = createRouter({

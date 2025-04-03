@@ -5,11 +5,18 @@
 
             <template v-if="userRole === 'User'">
                 <span class="separator">|</span>
+                <router-link to="/find-fa">Find FA</router-link>
+                <span class="separator">|</span>
                 <router-link to="/uploads">Uploads</router-link>
                 <span class="separator">|</span>
                 <router-link to="/expenses">Expenses</router-link>
                 <span class="separator">|</span>
                 <router-link to="/goals">Goals</router-link>
+            </template>
+
+            <template v-if="userRole === 'FA'">
+                <span class="separator">|</span>
+                <router-link to="/find-client">Find Client</router-link>
             </template>
 
             <span class="separator">|</span>
