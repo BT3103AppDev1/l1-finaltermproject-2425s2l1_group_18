@@ -91,6 +91,12 @@ button {
     cursor: pointer;
 }
 
+.register-btn {
+    font-size: 13px;
+    padding: 10px 10px; /* Adjust padding to fit text in one line */
+    white-space: nowrap; /* Prevent text from wrapping */
+}
+
 button:hover {
     background-color: #0056b3;
 }
@@ -98,6 +104,7 @@ button:hover {
 .button-group {
     display: flex;
     gap: 20px;
+    margin-top: 10px;
 }
 
 .button-group button {
