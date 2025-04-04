@@ -3,7 +3,7 @@
     <div class="find-fa-container">
       <div class="columns">
         <!-- Left: Search -->
-        <div class="box">
+        <div class="left-box">
           <h3>Search for Financial Advisors</h3>
           <input
             type="text"
@@ -22,7 +22,7 @@
         </div>
   
         <!-- Right: Received Requests -->
-        <div class="box">
+        <div class="right-box">
       <h3>Received Requests</h3>
       <ul>
         <li v-for="request in receivedRequests" :key="request.id">
@@ -47,7 +47,9 @@
           <p><strong>About:</strong> {{ selectedFA.about }}</p>
           <p><strong>Representative Number:</strong> {{ selectedFA.representativeNumber }}</p>
           <p><strong>Total Clients:</strong> {{ selectedFA.totalClients }}</p>
-          <button @click="closeModal">Close</button>
+          <div class="button-container">
+            <button @click="closeModal">Close</button>
+          </div>
         </div>
       </div>
     </div>
@@ -218,13 +220,31 @@
     margin-top: 20px;
   }
   
-  .box {
-    flex: 1;
-    background-color: rgb(251, 248, 243);
-    padding: 20px;
-    border: 1px solid #000;
-    border-radius: 8px;
+  .columns {
+    display: flex;
+    justify-content: space-between;
+   gap: 30px;
+    margin-top: 20px;
   }
+
+.left-box {
+  flex: 2;
+  max-width: 40%;
+  background-color: rgb(251, 248, 243);
+  padding: 20px;
+  border: 1px solid #000;
+  border-radius: 5px;
+}
+
+.right-box {
+  flex: 3;
+  max-width: 60%;
+  background-color: rgb(251, 248, 243);
+  padding: 20px;
+  border: 1px solid #000;
+  border-radius: 5px;
+}
+
   
   input[type="text"] {
     width: 80%;
@@ -266,9 +286,8 @@
     border-radius: 20px;
     border: 0.5px solid grey;
     cursor: pointer;
-    font-weight: bold;
     margin-left: 2px;
-    font-size: 12px;
+    font-size: 13px;
     font-family: "Georgia", serif;
 
   }
@@ -312,14 +331,27 @@
     background: rgb(251, 248, 243);
     padding: 20px;
     border-radius: 10px;
-    max-width: 400px;
+    max-width: 350px;
     width: 100%;
+    text-align: center;
   }
   
   .modal button {
-    background-color: #007bff;
-    color: white;
+    background-color: #b0d5fc;
+    color: black;
     margin-top: 20px;
+    padding: 5px 20px;
   }
+
+  .modal h3 {
+  text-align: center; /* Ensure header is centered */
+  }
+
+  .modal .button-container {
+  display: flex;
+  justify-content: center;
+  }
+
+  
   </style>
   
