@@ -5,23 +5,23 @@
             <div class="header">
                 <h2>All Expenses</h2>
                 <img src="@/assets/finbonacci_logo.png" alt="Logo" class="logo-image" />
-        </div>
-            
+            </div>
+
             <div class="filter-buttons-container">
                 <!-- Month & Year Filter -->
-                    <select v-model="filterMonth" class="filter-button">
-                        <option value="">All Months</option>
-                        <option v-for="m in 12" :key="m" :value="m.toString().padStart(2, '0')">
-                            {{ new Date(0, m - 1).toLocaleString('default', { month: 'long' }) }}
-                        </option>
-                    </select>
+                <select v-model="filterMonth" class="filter-button">
+                    <option value="">All Months</option>
+                    <option v-for="m in 12" :key="m" :value="m.toString().padStart(2, '0')">
+                        {{ new Date(0, m - 1).toLocaleString('default', { month: 'long' }) }}
+                    </option>
+                </select>
 
-                    <select v-model="filterYear" class="filter-button">
-                        <option value="">All Years</option>
-                        <option v-for="year in availableYears" :key="year" :value="year">
-                            {{ year }}
-                        </option>
-                    </select>
+                <select v-model="filterYear" class="filter-button">
+                    <option value="">All Years</option>
+                    <option v-for="year in availableYears" :key="year" :value="year">
+                        {{ year }}
+                    </option>
+                </select>
 
                 <!-- Sort Dropdown -->
                 <select v-model="sortBy" class="filter-button">
@@ -41,6 +41,7 @@
                 <thead>
                     <tr>
                         <th>Title</th>
+                        <th>Merchant</th>
                         <th>Cost</th>
                         <th>Date</th>
                         <th>Category</th>
@@ -49,19 +50,31 @@
                     </tr>
                 </thead>
                 <tbody>
-                    <tr v-for="expense in sortedExpenses" :key="expense.id" :class="{'recurring': expense.type === 'Recurring', 'one-time': expense.type === 'One Time'}">
+                    <tr
+                        v-for="expense in sortedExpenses"
+                        :key="expense.id"
+                        :class="{ recurring: expense.type === 'Recurring', 'one-time': expense.type === 'One Time' }"
+                    >
                         <td>{{ expense.title }}</td>
+                        <td>{{ expense.merchant }}</td>
                         <td>${{ expense.cost.toFixed(2) }}</td>
                         <td>{{ expense.date }}</td>
                         <td>
-                            <span :class="['category-badge', expense.category.toLowerCase().replace(/\s+/g, '-')]" >
+                            <span
+                                :class="['category-badge', expense.category.toLowerCase().replace(/\s+/g, '-')]"
+                            >
                                 {{ expense.category }}
                             </span>
                         </td>
                         <td>{{ expense.type }}</td>
                         <td>
                             <button class="view-edit-button" @click="editExpense(expense)">View & Edit</button>
-                            <button class="delete-button" @click="deleteExpense(expense.id)">Remove</button>
+                            <button
+                                class="delete-button"
+                                @click="openDeleteModal(expense.id, expense.isRecurring)"
+                            >
+                                Remove
+                            </button>
                         </td>
                     </tr>
                 </tbody>
@@ -75,13 +88,23 @@
 
         <!-- Add / Edit Expense Modal -->
         <div v-if="showAddExpenseModal" class="modal">
-            <div class="modal-content">
-                <h3>{{ isEditing ? 'Edit Expense' : 'New Expense' }}</h3>
+            <div class="modal-content smaller-modal">
+                <h3 class="modal-title">{{ isEditing ? 'Edit Expense' : 'New Expense' }}</h3>
 
-                <input v-model="newExpense.title" placeholder="Title" />
-                <input v-model.number="newExpense.cost" type="number" placeholder="Cost" />
-                <input v-model="newExpense.date" type="date" />
-                <select v-model="newExpense.category">
+                <label for="title">Title</label>
+                <input id="title" v-model="newExpense.title" placeholder="Title" />
+
+                <label for="merchant">Merchant</label>
+                <input id="merchant" v-model="newExpense.merchant" placeholder="Merchant" />
+
+                <label for="cost">Cost</label>
+                <input id="cost" v-model.number="newExpense.cost" type="number" placeholder="Cost" />
+
+                <label for="date">Date</label>
+                <input id="date" v-model="newExpense.date" type="date" />
+
+                <label for="category">Category</label>
+                <select id="category" v-model="newExpense.category">
                     <option value="Food">Food</option>
                     <option value="Transport">Transport</option>
                     <option value="Shopping">Shopping</option>
@@ -89,11 +112,25 @@
                     <option value="Groceries">Groceries</option>
                     <option value="Others">Others</option>
                 </select>
-                <select v-model="newExpense.type">
+
+                <label for="type">Type</label>
+                <select id="type" v-model="newExpense.type">
                     <option value="One Time">One Time</option>
                     <option value="Recurring">Recurring</option>
                 </select>
-                <input v-model="newExpense.merchant" placeholder="Merchant" />
+
+                <!-- Recurrence Options -->
+                <div v-if="newExpense.type === 'Recurring'">
+                    <label for="recurrenceFrequency">Recurrence Frequency</label>
+                    <select id="recurrenceFrequency" v-model="newExpense.recurrenceFrequency">
+                        <option value="weekly">Weekly</option>
+                        <option value="monthly">Monthly</option>
+                        <option value="yearly">Yearly</option>
+                    </select>
+
+                    <label for="recurrenceEndDate">Recurrence End Date</label>
+                    <input id="recurrenceEndDate" v-model="newExpense.recurrenceEndDate" type="date" placeholder="Recurrence End Date" />
+                </div>
 
                 <div class="modal-button-group">
                     <button @click="isEditing ? updateExpense() : saveExpense()">
@@ -101,7 +138,26 @@
                     </button>
                     <button @click="showAddExpenseModal = false" class="cancel-button">Cancel</button>
                 </div>
+            </div>
+        </div>
 
+        <!-- Delete Confirmation Modal -->
+        <div v-if="showDeleteModal" class="modal-overlay">
+            <div class="modal smaller-modal">
+                <h3 class="modal-title">Are you sure you want to delete?</h3>
+                <div class="button-group">
+                    <!-- If the expense is recurring, show all three buttons -->
+                    <div v-if="deleteExpenseDetails.isRecurring">
+                        <button @click="handleDelete('all')">Delete All</button>
+                        <button @click="handleDelete('this')">Delete This Only</button>
+                        <button @click="showDeleteModal = false" class="cancel-button">Cancel</button>
+                    </div>
+                    <!-- If the expense is one-time, show only Delete and Cancel buttons -->
+                    <div v-else>
+                        <button @click="handleDelete('this')">Delete</button>
+                        <button @click="showDeleteModal = false" class="cancel-button">Cancel</button>
+                    </div>
+                </div>
             </div>
         </div>
     </div>
@@ -109,7 +165,18 @@
 
 <script setup>
 import { ref, computed, onMounted } from "vue";
-import { getFirestore, collection, query, where, getDocs, doc, addDoc, deleteDoc, updateDoc } from "firebase/firestore";
+import {
+    getFirestore,
+    collection,
+    query,
+    where,
+    getDocs,
+    doc,
+    addDoc,
+    deleteDoc,
+    updateDoc,
+    writeBatch,
+} from "firebase/firestore";
 import { getAuth } from "firebase/auth";
 import Navbar from "../components/TheNavbar.vue";
 
@@ -119,8 +186,10 @@ const auth = getAuth();
 const expenses = ref([]);
 const sortBy = ref("dateDesc");
 const showAddExpenseModal = ref(false);
+const showDeleteModal = ref(false);
 const isEditing = ref(false);
 const editingExpenseId = ref(null);
+const deleteExpenseDetails = ref({ id: null, isRecurring: false });
 
 const filterMonth = ref("");
 const filterYear = ref("");
@@ -131,7 +200,8 @@ const newExpense = ref({
     date: "",
     category: "Food",
     type: "One Time",
-    merchant: "",
+    recurrenceFrequency: "",
+    recurrenceEndDate: "",
 });
 
 const openAddExpenseModal = () => {
@@ -141,10 +211,66 @@ const openAddExpenseModal = () => {
         date: "",
         category: "Food",
         type: "One Time",
-        merchant: "",
+        recurrenceFrequency: "",
+        recurrenceEndDate: "",
     };
     isEditing.value = false;
     showAddExpenseModal.value = true;
+};
+
+const openDeleteModal = (id, isRecurring) => {
+    deleteExpenseDetails.value = { id, isRecurring };
+    showDeleteModal.value = true;
+};
+
+const handleDelete = async (action) => {
+    const { id, isRecurring } = deleteExpenseDetails.value;
+    const userDocId = await getUserDocId();
+    if (!userDocId) return;
+
+    if (isRecurring) {
+        if (action === "all") {
+            try {
+                const expensesRef = collection(db, "users", userDocId, "expenses");
+                const q = query(expensesRef, where("title", "==", expenses.value.find((e) => e.id === id).title));
+                const querySnapshot = await getDocs(q);
+
+                const batch = writeBatch(db);
+                querySnapshot.forEach((doc) => {
+                    batch.delete(doc.ref);
+                });
+                await batch.commit();
+
+                alert("All occurrences of the recurring expense have been deleted.");
+            } catch (error) {
+                console.error("Error deleting all occurrences of recurring expense:", error);
+                alert("Failed to delete all occurrences. Please try again.");
+            }
+        } else if (action === "this") {
+            try {
+                const expenseRef = doc(db, "users", userDocId, "expenses", id);
+                await deleteDoc(expenseRef);
+
+                alert("The specific occurrence has been deleted.");
+            } catch (error) {
+                console.error("Error deleting specific occurrence of recurring expense:", error);
+                alert("Failed to delete the specific occurrence. Please try again.");
+            }
+        }
+    } else {
+        try {
+            const expenseRef = doc(db, "users", userDocId, "expenses", id);
+            await deleteDoc(expenseRef);
+
+            alert("The one-time expense has been deleted.");
+        } catch (error) {
+            console.error("Error deleting one-time expense:", error);
+            alert("Failed to delete the expense. Please try again.");
+        }
+    }
+
+    showDeleteModal.value = false;
+    fetchExpenses();
 };
 
 // Find the Correct User Document
@@ -169,25 +295,78 @@ const fetchExpenses = async () => {
 
     const expensesRef = collection(db, "users", userDocId, "expenses");
     const querySnapshot = await getDocs(expensesRef);
-    
-    expenses.value = querySnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+
+    expenses.value = querySnapshot.docs.map((doc) => ({ id: doc.id, ...doc.data() }));
 };
 
 // Save New Expense
 const saveExpense = async () => {
     const userDocId = await getUserDocId();
-    if (!userDocId) return;
+    if (!userDocId) {
+        alert("Failed to retrieve user document ID.");
+        return;
+    }
 
     const expensesRef = collection(db, "users", userDocId, "expenses");
-    await addDoc(expensesRef, newExpense.value);
+
+    if (newExpense.value.type === "Recurring" && newExpense.value.recurrenceFrequency && newExpense.value.recurrenceEndDate) {
+        const startDate = new Date(newExpense.value.date);
+        const endDate = new Date(newExpense.value.recurrenceEndDate);
+
+        if (isNaN(startDate) || isNaN(endDate)) {
+            alert("Invalid start or end date. Please check your input.");
+            return;
+        }
+
+        const occurrences = [];
+        let currentDate = new Date(startDate);
+
+        while (currentDate <= endDate) {
+            occurrences.push({
+                ...newExpense.value,
+                date: currentDate.toISOString().split("T")[0],
+                isRecurring: true,
+            });
+
+            if (newExpense.value.recurrenceFrequency === "weekly") {
+                currentDate.setDate(currentDate.getDate() + 7);
+            } else if (newExpense.value.recurrenceFrequency === "monthly") {
+                currentDate.setMonth(currentDate.getMonth() + 1);
+            } else if (newExpense.value.recurrenceFrequency === "yearly") {
+                currentDate.setFullYear(currentDate.getFullYear() + 1);
+            }
+        }
+
+        try {
+            const batch = writeBatch(db);
+            occurrences.forEach((occurrence) => {
+                const docRef = doc(expensesRef);
+                batch.set(docRef, occurrence);
+            });
+            await batch.commit();
+
+            alert("Recurring expenses added successfully!");
+        } catch (error) {
+            console.error("Error adding recurring expenses:", error);
+            alert("Failed to add recurring expenses. Please try again.");
+        }
+    } else {
+        try {
+            await addDoc(expensesRef, newExpense.value);
+            alert("Expense added successfully!");
+        } catch (error) {
+            console.error("Error adding expense:", error);
+            alert("Failed to add expense. Please try again.");
+        }
+    }
 
     showAddExpenseModal.value = false;
     fetchExpenses();
 };
 
-// Edit Expense - Load Data into Form
+// Edit Expense
 const editExpense = (expense) => {
-    newExpense.value = { ...expense }; // Copies values properly
+    newExpense.value = { ...expense };
     isEditing.value = true;
     editingExpenseId.value = expense.id;
     showAddExpenseModal.value = true;
@@ -208,20 +387,65 @@ const updateExpense = async () => {
 };
 
 // Delete Expense
-const deleteExpense = async (id) => {
+const deleteExpense = async (id, isRecurring = false) => {
     const userDocId = await getUserDocId();
     if (!userDocId) return;
 
-    const expenseRef = doc(db, "users", userDocId, "expenses", id);
-    await deleteDoc(expenseRef);
-    fetchExpenses();
+    if (isRecurring) {
+        // Show a confirmation dialog for recurring expenses
+        const deleteOption = confirm("Do you want to delete all occurrences of this recurring expense? Click 'OK' for all, 'Cancel' for just this one.");
+        if (deleteOption) {
+            // Delete all occurrences of the recurring expense
+            try {
+                const expensesRef = collection(db, "users", userDocId, "expenses");
+                const q = query(expensesRef, where("title", "==", expenses.value.find((e) => e.id === id).title));
+                const querySnapshot = await getDocs(q);
+
+                const batch = writeBatch(db);
+                querySnapshot.forEach((doc) => {
+                    batch.delete(doc.ref);
+                });
+                await batch.commit();
+
+                alert("All occurrences of the recurring expense have been deleted.");
+            } catch (error) {
+                console.error("Error deleting all occurrences of recurring expense:", error);
+                alert("Failed to delete all occurrences. Please try again.");
+            }
+        } else {
+            // Delete only the specific occurrence
+            try {
+                const expenseRef = doc(db, "users", userDocId, "expenses", id);
+                await deleteDoc(expenseRef);
+
+                alert("The specific occurrence has been deleted.");
+            } catch (error) {
+                console.error("Error deleting specific occurrence of recurring expense:", error);
+                alert("Failed to delete the specific occurrence. Please try again.");
+            }
+        }
+    } else {
+        // Delete one-time expense directly
+        try {
+            const expenseRef = doc(db, "users", userDocId, "expenses", id);
+            await deleteDoc(expenseRef);
+
+            alert("The one-time expense has been deleted.");
+        } catch (error) {
+            console.error("Error deleting one-time expense:", error);
+            alert("Failed to delete the expense. Please try again.");
+        }
+    }
+
+    fetchExpenses(); // Refresh the expenses list
 };
 
 // Filter Expenses by MM/YYYY
 const filteredExpenses = computed(() => {
-    return expenses.value.filter(expense => {
+    return expenses.value.filter((expense) => {
         const expenseDate = new Date(expense.date);
-        const monthMatches = !filterMonth.value || (expenseDate.getMonth() + 1).toString().padStart(2, "0") === filterMonth.value;
+        const monthMatches =
+            !filterMonth.value || (expenseDate.getMonth() + 1).toString().padStart(2, "0") === filterMonth.value;
         const yearMatches = !filterYear.value || expenseDate.getFullYear().toString() === filterYear.value;
         return monthMatches && yearMatches;
     });
@@ -231,21 +455,32 @@ const filteredExpenses = computed(() => {
 const sortedExpenses = computed(() => {
     let sorted = [...filteredExpenses.value];
     switch (sortBy.value) {
-        case "costAsc": return sorted.sort((a, b) => a.cost - b.cost);
-        case "costDesc": return sorted.sort((a, b) => b.cost - a.cost);
-        case "dateAsc": return sorted.sort((a, b) => new Date(a.date) - new Date(b.date));
-        case "dateDesc": return sorted.sort((a, b) => new Date(b.date) - new Date(a.date));
-        case "alphaAsc": return sorted.sort((a, b) => a.title.localeCompare(b.title));
-        case "alphaDesc": return sorted.sort((a, b) => b.title.localeCompare(a.title));
-        case "category": return sorted.sort((a, b) => a.category.localeCompare(b.category));
-        case "type": return sorted.sort((a, b) => a.type.localeCompare(b.type));
-        default: return sorted;
+        case "costAsc":
+            return sorted.sort((a, b) => a.cost - b.cost);
+        case "costDesc":
+            return sorted.sort((a, b) => b.cost - a.cost);
+        case "dateAsc":
+            return sorted.sort((a, b) => new Date(a.date) - new Date(b.date));
+        case "dateDesc":
+            return sorted.sort((a, b) => new Date(b.date) - new Date(a.date));
+        case "alphaAsc":
+            return sorted.sort((a, b) => a.title.localeCompare(b.title));
+        case "alphaDesc":
+            return sorted.sort((a, b) => b.title.localeCompare(a.title));
+        case "category":
+            return sorted.sort((a, b) => a.category.localeCompare(b.category));
+        case "type":
+            return sorted.sort((a, b) => a.type.localeCompare(b.type));
+        default:
+            return sorted;
     }
 });
 
 // Get Available Years
 const availableYears = computed(() => {
-    return Array.from(new Set(expenses.value.map(exp => new Date(exp.date).getFullYear().toString()))).sort((a, b) => b - a);
+    return Array.from(new Set(expenses.value.map((exp) => new Date(exp.date).getFullYear().toString()))).sort(
+        (a, b) => b - a
+    );
 });
 
 onMounted(fetchExpenses);
@@ -436,46 +671,45 @@ select {
     left: 50%;
     transform: translate(-50%, -50%);
     background: white;
-    padding: 20px;
-    border-radius: 10px;
+    padding: 15px; /* Reduced padding */
+    border-radius: 8px; /* Slightly smaller border radius */
     box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.2);
-    width: 400px;
+    width: 300px; /* Reduced width */
+    max-height: 80vh; /* Ensure it fits within the viewport */
+    overflow-y: auto; /* Add scrolling if content overflows */
+    font-size: 12px; /* Reduced font size */
 }
 
-.modal-content input, .modal-content select {
+/* Modal Content Styling */
+.modal-content input,
+.modal-content select {
     width: 100%;
-    padding: 8px 12px;
-    margin: 10px 0;
+    padding: 6px 10px; /* Reduced padding */
+    margin: 8px 0; /* Reduced margin */
     border: 1px solid #ccc;
     border-radius: 5px;
     box-sizing: border-box;
+    font-size: 12px; /* Reduced font size */
 }
+
 .modal-content {
     text-align: center;
 }
 
-.modal-content button {
-    padding: 6px 8px;
-    font-size: 12px;
-    border-radius: 25px;
-    margin-top: 10px;
-    margin-right: 8px;
-}
-
+/* Modal Buttons */
 .modal-button-group {
     display: flex;
-    flex-direction: column;
-    gap: 4px; /* space between Save and Cancel buttons */
+    justify-content: center;
+    gap: 8px; /* Adjusted spacing between buttons */
     margin-top: 10px;
-    align-items: center;
 }
 
 .modal-button-group button {
-    padding: 6px 8px;
-    font-size: 11px;
-    border-radius: 25px;
-    width: 30%;
+    padding: 6px 10px; /* Reduced padding */
+    font-size: 11px; /* Reduced font size */
+    border-radius: 20px;
     background-color: #e5e4e4;
+    width: 40%; /* Adjusted button width */
 }
 
 .modal-button-group .cancel-button {
@@ -483,6 +717,63 @@ select {
     color: black;
 }
 
+/* Smaller Modal for Expense and Delete */
+.smaller-modal {
+    width: 280px; /* Reduced width for smaller modals */
+    padding: 10px; /* Reduced padding */
+    font-size: 12px; /* Reduced font size */
+}
+
+/* Modal Title Styling */
+.modal-title {
+    font-size: 14px; /* Reduced font size */
+    font-weight: bold;
+    margin-bottom: 8px; /* Reduced margin */
+    text-align: center;
+}
+
+/* Delete Modal Button Group */
+.button-group {
+    display: flex;
+    justify-content: space-evenly; /* Ensure equal spacing between buttons */
+    align-items: center; /* Align the buttons vertically */
+    gap: 10px; /* Add consistent spacing between buttons */
+    margin-top: 15px;
+}
+
+.button-group button {
+    flex: 1; /* Ensure buttons take equal space */
+    max-width: 120px; /* Set a consistent maximum width for buttons */
+    text-align: center;
+    padding: 10px 15px; /* Adjust padding for better appearance */
+    font-size: 12px; /* Consistent font size */
+    border-radius: 25px; /* Rounded buttons */
+    background-color: #e5e4e4;
+    border: 1px solid #ccc;
+    cursor: pointer;
+    transition: background-color 0.3s ease, opacity 0.3s ease; /* Smooth hover effect */
+}
+
+.button-group button:hover {
+    opacity: 0.9; /* Add hover effect */
+}
+
+.button-group .cancel-button {
+    background-color: #f8dcdc;
+    color: black;
+}
+
+.button-group .cancel-button:hover {
+    background-color: #f5bcbc; /* Slightly darker hover effect for cancel button */
+}
+
+/* Add/Edit Modal Labels */
+.modal-content label {
+    display: block;
+    margin-bottom: 5px;
+    font-weight: bold;
+    text-align: left;
+}
 
 /* Dropdown alignment */
 .sort-container {

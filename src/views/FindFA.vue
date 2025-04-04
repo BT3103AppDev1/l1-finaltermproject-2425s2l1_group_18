@@ -1,7 +1,6 @@
 <template>
+    <Navbar />
     <div class="find-fa-container">
-      <Navbar />
-  
       <div class="columns">
         <!-- Left: Search -->
         <div class="box">
