@@ -232,7 +232,7 @@
   max-width: 40%;
   background-color: rgb(251, 248, 243);
   padding: 20px;
-  border: 1px solid #000;
+  border: 1px solid grey;
   border-radius: 5px;
 }
 
@@ -241,7 +241,7 @@
   max-width: 60%;
   background-color: rgb(251, 248, 243);
   padding: 20px;
-  border: 1px solid #000;
+  border: 1px solid grey;
   border-radius: 5px;
 }
 
