@@ -1,51 +1,63 @@
 <template>
     <Navbar />
     <div class="find-client-container">
-        <h2>Find Clients</h2>
-        <input
+      <div class="columns">
+        <!-- Left: Search -->
+        <div class="box search-box">
+          <h3>Search for Clients</h3>
+          <input
             type="text"
             v-model="searchQuery"
             placeholder="Search for Clients..."
             @input="searchClients"
-        />
-
-        <h3>Search Results</h3>
-        <ul>
+          />
+  
+          <h3>Results:</h3>
+          <ul>
             <li v-for="client in searchResults" :key="client.id">
-                {{ client.username }}
+              {{ client.username }}
+              <div class="button-group">
                 <button @click="viewClient(client)">View</button>
-                <!-- Disable the "Send Request" button if the client is in sentRequests or clients -->
                 <button
-                    :disabled="isRequestNotAllowed(client.id)"
-                    @click="sendRequest(client)"
+                  :disabled="isRequestNotAllowed(client.id)"
+                  @click="sendRequest(client)"
                 >
-                    {{ isRequestNotAllowed(client.id) ? "Request Not Allowed" : "Send Request" }}
+                  {{ isRequestNotAllowed(client.id) ? "Request Not Allowed" : "Send Request" }}
                 </button>
+              </div>
             </li>
-        </ul>
-
-        <!-- Modal for viewing client details -->
-        <div v-if="selectedClient" class="modal-overlay" @click.self="closeModal">
-            <div class="modal">
-                <h3>Client Details</h3>
-                <p><strong>Username:</strong> {{ selectedClient.username }}</p>
-                <p><strong>Email:</strong> {{ selectedClient.email }}</p>
-                <p><strong>Savings Target:</strong> {{ selectedClient.savingsTarget }}</p>
-                <p><strong>Gender:</strong> {{ selectedClient.gender }}</p>
-                <p><strong>Age:</strong> {{ selectedClient.age }}</p>
-                <button @click="closeModal">Close</button>
-            </div>
+          </ul>
         </div>
-
-        <h3>Sent Requests</h3>
-        <ul>
+  
+        <!-- Right: Sent Requests -->
+        <div class="box requests-box">
+          <h3>Sent Requests</h3>
+          <ul>
             <li v-for="request in sentRequests" :key="request.id">
-                {{ request.username }}
-                <button @click="deleteRequest(request)">Delete</button>
+              {{ request.username }}
+              <div class="button-group">
+                <button @click="viewClient(request)">View</button>
+                <button @click="deleteRequest(request)">Remove</button>
+              </div>
             </li>
-        </ul>
+          </ul>
+        </div>
+      </div>
+  
+      <!-- Modal -->
+      <div v-if="selectedClient" class="modal-overlay" @click.self="closeModal">
+        <div class="modal">
+          <h3>Client Details</h3>
+          <p><strong>Username:</strong> {{ selectedClient.username }}</p>
+          <p><strong>Email:</strong> {{ selectedClient.email }}</p>
+          <p><strong>Savings Target:</strong> {{ selectedClient.savingsTarget }}</p>
+          <p><strong>Gender:</strong> {{ selectedClient.gender }}</p>
+          <p><strong>Age:</strong> {{ selectedClient.age }}</p>
+          <button @click="closeModal">Close</button>
+        </div>
+      </div>
     </div>
-</template>
+  </template>
 
 <script setup>
 import { ref, onMounted } from "vue";
@@ -236,78 +248,130 @@ onMounted(async () => {
 
 <style scoped>
 .find-client-container {
-    max-width: 800px;
-    margin: auto;
-    padding: 20px;
-    text-align: center;
+  max-width: 1200px;
+  margin: auto;
+  padding: 20px;
+  font-family: "Georgia", serif;
 }
 
-input {
-    width: 100%;
-    padding: 10px;
-    margin-bottom: 20px;
-    border: 1px solid #ccc;
-    border-radius: 5px;
+.columns {
+  display: flex;
+  justify-content: space-between;
+  gap: 30px;
+  margin-top: 20px;
+}
+
+.box {
+  background-color: rgb(251, 248, 243);
+  padding: 20px;
+  border: 1px solid #000;
+  border-radius: 5px;
+}
+
+.search-box {
+  flex: 0.8;
+}
+
+.requests-box {
+  flex: 1.2;
+}
+
+input[type="text"] {
+  width: 80%;
+  padding: 8px;
+  margin-bottom: 15px;
+  border: 1px solid grey;
+  border-radius: 12px;
+  font-size: 14px;
+  background-color: rgb(251, 248, 243);
+}
+
+h3 {
+  margin-bottom: 20px;
+  text-align: left;
+  font-weight: bold;
+  font-size: 20px;
 }
 
 ul {
-    list-style: none;
-    padding: 0;
+  list-style: none;
+  padding: 0;
+  margin: 0;
 }
 
 li {
-    margin: 10px 0;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
+  background-color: rgb(251, 248, 243);
+  padding: 10px 15px;
+  margin-bottom: 10px;
+  border-radius: 8px;
+  border: 1px solid rgb(166, 164, 164);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.button-group {
+  display: flex;
+  gap: 10px;
 }
 
 button {
-    padding: 5px 10px;
-    border: none;
-    border-radius: 5px;
-    cursor: pointer;
+  padding: 5px 17px;
+  border-radius: 20px;
+  border: 0.5px solid grey;
+  cursor: pointer;
+  font-size: 12px;
+  font-family: "Georgia", serif;
 }
 
 button:hover {
-    background-color: #ddd;
+  opacity: 0.85;
+}
+
+button:nth-of-type(1) {
+  background-color: #b0d5fc;
+}
+
+button:nth-of-type(2),
+button:disabled {
+  background-color: #ffb4b4;
+}
+
+button:nth-of-type(3) {
+  background-color: #bff8c0;
 }
 
 /* Modal styles */
 .modal-overlay {
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    background: rgba(0, 0, 0, 0.5);
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    z-index: 1000;
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.5);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000;
 }
 
 .modal {
-    background: white;
+    background: rgb(251, 248, 243);
     padding: 20px;
     border-radius: 10px;
-    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
-    text-align: left;
-    max-width: 400px;
+    max-width: 350px;
     width: 100%;
+    text-align: center;
+}
+  
+.modal h3 {
+  text-align: center; 
 }
 
 .modal button {
+    background-color: #b0d5fc;
+    color: black;
     margin-top: 20px;
-    padding: 10px 20px;
-    background-color: #007bff;
-    color: white;
-    border: none;
-    border-radius: 5px;
-    cursor: pointer;
-}
-
-.modal button:hover {
-    background-color: #0056b3;
+    padding: 5px 20px;
 }
 </style>
