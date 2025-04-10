@@ -6,8 +6,40 @@
       <div v-else><h2>Expense Analytics</h2></div>
 
       <div v-if="userProfile.role === 'FA'">
-        <p>More Updates Soon</p>
-      </div>
+        <p>Total Clients: {{ totalClients }}</p>
+        <div class="find-client-container">
+        <h2>Find Clients</h2>
+        <input
+            type="text"
+            v-model="searchQuery"
+            placeholder="Search for Clients..."
+            @input="searchClients"
+        />
+
+        <h3>Search Results</h3>
+        <ul>
+            <li v-for="client in searchResults" :key="client.id">
+                {{ client.username }}
+                <button @click="viewClient(client)">View</button>
+            </li>
+        </ul>
+
+        <!-- Modal for viewing client details -->
+        <div v-if="selectedClient" class="modal-overlay" @click.self="closeModal">
+            <div class="modal">
+                <h3>Client Details</h3>
+                <p><strong>Username:</strong> {{ selectedClient.username }}</p>
+                <p><strong>Email:</strong> {{ selectedClient.email }}</p>
+                <p><strong>Savings Target:</strong> {{ selectedClient.savingsTarget }}</p>
+                <p><strong>Gender:</strong> {{ selectedClient.gender }}</p>
+                <p><strong>Age:</strong> {{ selectedClient.age }}</p>
+                <button @click="closeModal">Close</button>
+            </div>
+        </div>
+
+        </div>
+        
+    </div>
       
       <div v-else>
         <!-- Month Selector -->
@@ -102,6 +134,7 @@ const budgetPieChartData = ref([]);
 const categoryTotals = ref({});
 
 const userProfile = ref({});
+const totalClients = ref(0);
 
 // Get the current user document ID
 const getUserDocId = async () => {
@@ -228,9 +261,79 @@ const updateBudgetPieChart = () => {
   ];
 };
 
+const getTotalClients = async () => {
+  if (userProfile.value.role === "FA") {
+    const user = auth.currentUser;
+    const clientsRef = collection(db, "users", user.uid, "clients");
+    const querySnapshot = await getDocs(clientsRef);
+    return querySnapshot.size;
+  }
+  return 0;
+};
+
+const searchQuery = ref("");
+const searchResults = ref([]);
+const selectedClient = ref(null);
+const clients = ref([]); // To store the list of clients associated with the FA
+const currentFAId = ref("");
+const currentFAUsername = ref("");
+const currentFAEmail = ref("");
+
+
+const searchClients = async () => {
+    if (searchQuery.value.trim() === "") {
+        searchResults.value = []; // Clear results if search query is empty
+        return;
+    }
+
+    try {
+        const usersRef = collection(db, "users");
+        const q = query(usersRef, where("role", "==", "User"));
+        const querySnapshot = await getDocs(q);
+
+        // Filter clients whose username starts with the search query
+        searchResults.value = querySnapshot.docs
+            .map((doc) => ({
+                id: doc.id,
+                ...doc.data(),
+            }))
+            .filter((client) =>
+                client.username.toLowerCase().startsWith(searchQuery.value.toLowerCase())
+            );
+    } catch (error) {
+        console.error("Error fetching clients:", error);
+    }
+};
+
+// Fetch clients associated with the current FA
+const fetchClients = async () => {
+    try {
+        const clientsRef = collection(db, "users", currentFAId.value, "clients");
+        const querySnapshot = await getDocs(clientsRef);
+
+        clients.value = querySnapshot.docs.map((doc) => ({
+            id: doc.id,
+            ...doc.data(),
+        }));
+    } catch (error) {
+        console.error("Error fetching clients:", error);
+    }
+};
+
+// View client details in a modal
+const viewClient = (client) => {
+    selectedClient.value = client;
+};
+
+// Close the modal
+const closeModal = () => {
+    selectedClient.value = null;
+};
+
 onMounted(async () => {
   await fetchExpenses();
   await fetchTotalBudget();
+  totalClients.value = await getTotalClients();
 });
 </script>
 
@@ -251,6 +354,12 @@ body, html {
   text-align: center;
   padding: 20px;
   background-color: rgb(251, 248, 243);
+}
+.find-client-container {
+    max-width: 800px;
+    margin: auto;
+    padding: 20px;
+    text-align: center;
 }
 
 /* Table styling */
