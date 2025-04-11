@@ -50,7 +50,7 @@
           <h3>Client Details</h3>
           <p><strong>Username:</strong> {{ selectedClient.username }}</p>
           <p><strong>Email:</strong> {{ selectedClient.email }}</p>
-          <p><strong>Savings Target:</strong> {{ selectedClient.savingsTarget }}</p>
+          <p><strong>Savings Target:</strong> {{ selectedClient.savingTarget }}</p>
           <p><strong>Gender:</strong> {{ selectedClient.gender }}</p>
           <p><strong>Age:</strong> {{ selectedClient.age }}</p>
           <button @click="closeModal">Close</button>
