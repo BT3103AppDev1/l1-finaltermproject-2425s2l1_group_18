@@ -7,22 +7,14 @@
 
       <div v-if="userProfile.role === 'FA'">
         <p>Total Clients: {{ totalClients }}</p>
-        <div class="find-client-container">
-        <h2>Find Clients</h2>
-        <input
-            type="text"
-            v-model="searchQuery"
-            placeholder="Search for Clients..."
-            @input="searchClients"
-        />
-
-        <h3>Search Results</h3>
+        <h2>My Clients</h2>
         <ul>
-            <li v-for="client in searchResults" :key="client.id">
-                {{ client.username }}
-                <button @click="viewClient(client)">View</button>
-            </li>
+          <li v-for="client in clients" :key="client.id">
+            {{ client.username }}
+            <button @click="viewClient(client)">View</button>
+          </li>
         </ul>
+        <div class="find-client-container">
 
         <!-- Modal for viewing client details -->
         <div v-if="selectedClient" class="modal-overlay" @click.self="closeModal">
@@ -30,7 +22,7 @@
                 <h3>Client Details</h3>
                 <p><strong>Username:</strong> {{ selectedClient.username }}</p>
                 <p><strong>Email:</strong> {{ selectedClient.email }}</p>
-                <p><strong>Savings Target:</strong> {{ selectedClient.savingsTarget }}</p>
+                <p><strong>Savings Target:</strong> {{ selectedClient.savingTarget }}</p>
                 <p><strong>Gender:</strong> {{ selectedClient.gender }}</p>
                 <p><strong>Age:</strong> {{ selectedClient.age }}</p>
                 <button @click="closeModal">Close</button>
@@ -117,7 +109,7 @@
 
 <script setup>
 import { ref, computed, onMounted } from "vue";
-import { getFirestore, collection, query, where, getDocs } from "firebase/firestore";
+import { getFirestore, collection, query, where, getDocs, doc, getDoc} from "firebase/firestore";
 import { getAuth } from "firebase/auth";
 import Navbar from "../components/TheNavbar.vue";
 
@@ -271,58 +263,43 @@ const getTotalClients = async () => {
   return 0;
 };
 
-const searchQuery = ref("");
-const searchResults = ref([]);
 const selectedClient = ref(null);
 const clients = ref([]); // To store the list of clients associated with the FA
-const currentFAId = ref("");
-const currentFAUsername = ref("");
-const currentFAEmail = ref("");
 
-
-const searchClients = async () => {
-    if (searchQuery.value.trim() === "") {
-        searchResults.value = []; // Clear results if search query is empty
-        return;
-    }
-
-    try {
-        const usersRef = collection(db, "users");
-        const q = query(usersRef, where("role", "==", "User"));
-        const querySnapshot = await getDocs(q);
-
-        // Filter clients whose username starts with the search query
-        searchResults.value = querySnapshot.docs
-            .map((doc) => ({
-                id: doc.id,
-                ...doc.data(),
-            }))
-            .filter((client) =>
-                client.username.toLowerCase().startsWith(searchQuery.value.toLowerCase())
-            );
-    } catch (error) {
-        console.error("Error fetching clients:", error);
-    }
-};
-
-// Fetch clients associated with the current FA
 const fetchClients = async () => {
-    try {
-        const clientsRef = collection(db, "users", currentFAId.value, "clients");
-        const querySnapshot = await getDocs(clientsRef);
+  const user = auth.currentUser;
+  if (!user) {
+    console.error("No authenticated user found.");
+    return;
+  }
 
-        clients.value = querySnapshot.docs.map((doc) => ({
-            id: doc.id,
-            ...doc.data(),
-        }));
-    } catch (error) {
-        console.error("Error fetching clients:", error);
-    }
+  try {
+    const clientsRef = collection(db, "users", user.uid, "clients");
+    const querySnapshot = await getDocs(clientsRef);
+    clients.value = querySnapshot.docs.map((doc) => ({
+      id: doc.id,
+      ...doc.data(), // Fetch all fields
+    }));
+  } catch (error) {
+    console.error("Error fetching clients:", error);
+  }
 };
 
-// View client details in a modal
-const viewClient = (client) => {
-    selectedClient.value = client;
+
+// View client details in a modal by polling Firestore
+const viewClient = async (client) => {
+  try {
+    const clientDocRef = doc(db, "users", client.id); // Reference to the client's user document
+    const clientDoc = await getDoc(clientDocRef); // Fetch the document from Firestore
+
+    if (clientDoc.exists()) {
+      selectedClient.value = { id: client.id, ...clientDoc.data() }; // Update selectedClient with the latest data
+    } else {
+      console.error("Client document does not exist.");
+    }
+  } catch (error) {
+    console.error("Error fetching client document:", error);
+  }
 };
 
 // Close the modal
@@ -334,7 +311,9 @@ onMounted(async () => {
   await fetchExpenses();
   await fetchTotalBudget();
   totalClients.value = await getTotalClients();
+  await fetchClients();
 });
+
 </script>
 
 <style scoped>
