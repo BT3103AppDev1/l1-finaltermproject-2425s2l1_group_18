@@ -28,6 +28,14 @@
             </div>
           </div>
         </div> <!-- Closing find-client-container -->
+        <div class="charts-container">
+          <!-- Pie Chart: Total Spent vs. Total Budget -->
+          <div class="chart">
+            <h3>Clients Meeting Target</h3>
+            <pie-chart :data="clientTargetPieChartData" :download="true" :colors="['#008000', '#ff0000']"/>
+          </div>
+        </div>
+
       </div>
       <div v-else>
         <!-- Month Selector -->
@@ -101,7 +109,7 @@ const auth = getAuth();
 const expenses = ref([]);
 const selectedMonth = ref(""); // Format: "MM/YYYY"
 const availableMonths = ref([]); // List of available months for selection
-const targetsPieChartData = ref([]); // Data for spending targets pie chart
+const clientTargetPieChartData = ref([]); // Data for spending targets pie chart
 
 const pieChartData = ref([]);
 const lineChartData = ref([]);
@@ -270,6 +278,7 @@ const fetchClients = async () => {
   } catch (error) {
     console.error("Error fetching clients:", error);
   }
+  updateClientTargetPieChartData();
 };
 
 
@@ -292,6 +301,38 @@ const viewClient = async (client) => {
 // Close the modal
 const closeModal = () => {
     selectedClient.value = null;
+};
+
+const updateClientTargetPieChartData = async () => {
+  let meetingTargets = 0;
+  const totalClients = clients.value.length;
+
+  for (const client of clients.value) {
+    try {
+      // Fetch the latest client document from Firestore
+      const clientDocRef = doc(db, "users", client.id);
+      const clientDoc = await getDoc(clientDocRef);
+
+      if (clientDoc.exists()) {
+        const clientData = clientDoc.data();
+        if (clientData.isMeetingTarget) {
+          meetingTargets++;
+        }
+      } else {
+        console.warn(`Client document does not exist for ID: ${client.id}`);
+      }
+    } catch (error) {
+      console.error(`Error polling client document for ID: ${client.id}`, error);
+    }
+  }
+
+  const notMeeting = totalClients - meetingTargets;
+
+  // Update the pie chart data
+  clientTargetPieChartData.value = [
+    ["Meeting", meetingTargets, "#f44336"], // Green for meeting targets
+    ["Not Meeting", notMeeting, "#4caf50"], // Red for not meeting targets
+  ];
 };
 
 onMounted(async () => {
