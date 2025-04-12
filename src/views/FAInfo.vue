@@ -21,24 +21,25 @@
     </div>
   
     <!-- 🔽 Financial Advice Container (Always shown if user has an FA) -->
-    <div
-      v-if="currentClientFA"
-      class="advice-container"
-    >
-    <p class="advice-title">Financial Advice:</p>
+    <div v-if="currentClientFA" class="memos-container">
+      <h3>View Memos from Your Financial Advisor</h3>
 
-    <p>
-      <span>Status:</span>
-      <span v-if="currentClientFA.adviceAvailable" class="status-available">
-        Available (Dated {{ currentClientFA.adviceDate }})
-      </span>
-      <span v-else class="status-nil"> NIL</span>
-    </p>
+      <select v-model="selectedMemo" class="memo-dropdown" @change="viewMemo">
+        <option disabled value="">Select a memo</option>
+        <option v-for="memo in sortedMemos" :key="memo.id" :value="memo">
+          {{ memo.label }} ({{ memo.date }})
+        </option>
+      </select>
 
-    <div v-if="currentClientFA.adviceAvailable" class="advice-box">
-      <p>{{ currentClientFA.adviceText }}</p>
-    </div>
-
+      <!-- Popup for displaying memo content -->
+      <div v-if="showMemoPopup" class="modal-overlay" @click.self="closeMemoPopup">
+        <div class="modal">
+          <h3>{{ selectedMemo.label }}</h3>
+          <p>{{ selectedMemo.content }}</p>
+          <button @click="downloadMemo">Download</button>
+          <button @click="closeMemoPopup">Close</button>
+        </div>
+      </div>
     </div>
   </template>
   
@@ -46,6 +47,7 @@
   import { ref, onMounted } from "vue";
   import { useRouter } from "vue-router";
   import { getAuth } from "firebase/auth";
+  import { computed } from "vue";
   import {
     getFirestore,
     doc,
@@ -64,6 +66,11 @@
   const currentClientFA = ref(null);
   const currentClientId = ref("");
   
+  const memos = ref([]);
+  const selectedMemo = ref(null);
+  const showMemoPopup = ref(false);
+
+
   const fetchCurrentFA = async () => {
     const user = auth.currentUser;
     if (!user) return;
@@ -105,6 +112,67 @@
     }
   };
   
+  const fetchClientMemos = async () => {
+    try {
+      const user = auth.currentUser;
+      if (!user) return;
+
+      const adviceRef = collection(db, "users", user.uid, "advice");
+      const snapshot = await getDocs(adviceRef);
+
+      memos.value = snapshot.docs.map(doc => ({
+        id: doc.id,
+        ...doc.data(),
+        date: doc.data().timestamp.toDate().toLocaleDateString(), // Format the date nicely
+      }));
+    } catch (error) {
+      console.error("Error fetching memos:", error);
+    }
+  };
+
+  const viewMemo = () => {
+    if (selectedMemo.value) {
+      showMemoPopup.value = true;
+    }
+  };
+
+  const sortedMemos = computed(() => {
+    return [...memos.value].sort((a, b) => {
+      return new Date(b.timestamp) - new Date(a.timestamp); // Sort by timestamp (most recent first)
+    });
+  });
+
+  const downloadMemo = () => {
+    if (!selectedMemo.value) return;
+
+    // Create a Blob with the memo content
+    const blob = new Blob([selectedMemo.value.content], { type: "text/plain" });
+
+    // Create a temporary URL for the Blob
+    const url = URL.createObjectURL(blob);
+
+    // Create a temporary anchor element to trigger the download
+    const a = document.createElement("a");
+    a.href = url;
+    a.download = `${selectedMemo.value.label}.txt`; // Use the memo label as the filename
+    document.body.appendChild(a);
+    a.click();
+
+    // Clean up the temporary URL and anchor element
+    document.body.removeChild(a);
+    URL.revokeObjectURL(url);
+  };
+
+  const closeMemoPopup = () => {
+    showMemoPopup.value = false;
+  };
+
+  onMounted(() => {
+    fetchCurrentFA();
+    fetchClientMemos();
+  });
+
+
   const removeFA = async () => {
     if (!currentClientFA.value) return;
   
@@ -168,6 +236,66 @@
     font-size: 17px;
     margin: 10px 0;
     line-height: 1.6;
+  }
+
+  .memos-container {
+    margin-top: 30px;
+    text-align: center;
+    width: 50%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;  
+    justify-content: center;
+    margin: 0 auto;
+
+  }
+
+  .memo-dropdown {
+    width: 100%;
+    padding: 10px;
+    border-radius: 10px;
+    font-family: inherit;
+    margin-bottom: 20px;
+  }
+
+  .modal-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.5);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  }
+
+  .modal {
+    background: white;
+    padding: 20px;
+    border-radius: 10px;
+    max-width: 500px;
+    width: 100%;
+    text-align: center;
+  }
+
+  .modal h3 {
+    margin-bottom: 10px;
+  }
+
+  .modal button {
+    margin-top: 10px;
+    padding: 10px 20px;
+    background-color: #4ca1ff;
+    color: white;
+    border: none;
+    border-radius: 25px;
+    font-size: 14px;
+    cursor: pointer;
+  }
+
+  .modal button:hover {
+    background-color: #328cf0;
   }
   
   .remove-btn,
