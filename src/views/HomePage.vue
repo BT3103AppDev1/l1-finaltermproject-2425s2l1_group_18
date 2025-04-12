@@ -15,24 +15,20 @@
           </li>
         </ul>
         <div class="find-client-container">
-
-        <!-- Modal for viewing client details -->
-        <div v-if="selectedClient" class="modal-overlay" @click.self="closeModal">
+          <!-- Modal for viewing client details -->
+          <div v-if="selectedClient" class="modal-overlay" @click.self="closeModal">
             <div class="modal">
-                <h3>Client Details</h3>
-                <p><strong>Username:</strong> {{ selectedClient.username }}</p>
-                <p><strong>Email:</strong> {{ selectedClient.email }}</p>
-                <p><strong>Savings Target:</strong> {{ selectedClient.savingTarget }}</p>
-                <p><strong>Gender:</strong> {{ selectedClient.gender }}</p>
-                <p><strong>Age:</strong> {{ selectedClient.age }}</p>
-                <button @click="closeModal">Close</button>
+              <h3>Client Details</h3>
+              <p><strong>Username:</strong> {{ selectedClient.username }}</p>
+              <p><strong>Email:</strong> {{ selectedClient.email }}</p>
+              <p><strong>Savings Target:</strong> {{ selectedClient.savingTarget }}</p>
+              <p><strong>Gender:</strong> {{ selectedClient.gender }}</p>
+              <p><strong>Age:</strong> {{ selectedClient.age }}</p>
+              <button @click="closeModal">Close</button>
             </div>
-        </div>
-
-        </div>
-        
-    </div>
-      
+          </div>
+        </div> <!-- Closing find-client-container -->
+      </div>
       <div v-else>
         <!-- Month Selector -->
         <label>Select Month:</label>
@@ -42,7 +38,7 @@
           </option>
         </select>
         
-        <h1> Total budget: {{totalBudget }}</h1> <br>
+        <h1> Total budget: {{ totalBudget }}</h1> <br>
 
         <!-- Pie Charts Container -->
         <div class="charts-container">
@@ -87,29 +83,15 @@
               <th>Amount ($)</th>
             </tr>
           </thead>
-          <tbody>
-            <tr v-for="(amount, category) in categoryTotals" :key="category">
-              <td>{{ category }}</td>
-              <td>${{ amount.toFixed(2) }}</td>
-            </tr>
-            <tr class="total-row">
-              <td><strong>Total</strong></td>
-              <td><strong>${{ totalExpenses.toFixed(2) }}</strong></td>
-            </tr>
-          </tbody>
         </table>
-        <br>
-        <!-- Line Chart: Spending Over Time -->
-        <h3>Spending Over Time</h3>
-        <line-chart :data="lineChartData" :download="true" />
-      </div>
-    </div>
-  </div>
+      </div> <!-- Closing v-else -->
+    </div> <!-- Closing container -->
+  </div> <!-- Closing root div -->
 </template>
 
 <script setup>
 import { ref, computed, onMounted } from "vue";
-import { getFirestore, collection, query, where, getDocs, doc, getDoc} from "firebase/firestore";
+import { getFirestore, collection, query, where, getDocs, doc, getDoc, updateDoc} from "firebase/firestore";
 import { getAuth } from "firebase/auth";
 import Navbar from "../components/TheNavbar.vue";
 
@@ -119,6 +101,7 @@ const auth = getAuth();
 const expenses = ref([]);
 const selectedMonth = ref(""); // Format: "MM/YYYY"
 const availableMonths = ref([]); // List of available months for selection
+const targetsPieChartData = ref([]); // Data for spending targets pie chart
 
 const pieChartData = ref([]);
 const lineChartData = ref([]);
@@ -246,6 +229,10 @@ const updateBudgetPieChart = () => {
 
   const spent = totalExpenses.value;
   const remaining = Math.max(totalBudget.value - spent, 0); // Ensure non-negative
+  const isMeetingTarget = spent <= totalBudget.value;
+  updateDoc(doc(db, "users", userProfile.value.uid), {
+    isMeetingTarget: isMeetingTarget,
+  });
 
   budgetPieChartData.value = [
     ["Spent", spent, "#f44336"], 
