@@ -19,6 +19,8 @@
             <template v-if="userRole === 'FA'">
                 <span class="separator">|</span>
                 <router-link to="/find-client">Find Client</router-link>
+                <span class="separator">|</span>
+                <router-link to="/give-advice">Give Advice</router-link>
             </template>
 
             <span class="separator">|</span>

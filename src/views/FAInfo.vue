@@ -26,20 +26,19 @@
       class="advice-container"
     >
     <p class="advice-title">Financial Advice:</p>
-      <p>
-        <span>Status:</span>
-        <span v-if="currentClientFA.adviceAvailable" class="status-available">
-          Available (Dated {{ currentClientFA.adviceDate }})
-        </span>
-        <span v-else class="status-nil"> NIL</span>
-      </p>
-      <button
-        v-if="currentClientFA.adviceAvailable"
-        @click="downloadAdvice"
-        class="download-btn"
-      >
-        Download
-      </button>
+
+    <p>
+      <span>Status:</span>
+      <span v-if="currentClientFA.adviceAvailable" class="status-available">
+        Available (Dated {{ currentClientFA.adviceDate }})
+      </span>
+      <span v-else class="status-nil"> NIL</span>
+    </p>
+
+    <div v-if="currentClientFA.adviceAvailable" class="advice-box">
+      <p>{{ currentClientFA.adviceText }}</p>
+    </div>
+
     </div>
   </template>
   
@@ -76,28 +75,31 @@
       const clientDoc = await getDoc(clientRef);
   
       if (clientDoc.exists()) {
-        const faId = clientDoc.data()?.fa?.id;
-  
+        const clientData = clientDoc.data();
+        const faId = clientData?.fa?.id;
+
         if (faId) {
           const faRef = doc(db, "users", faId);
           const faDoc = await getDoc(faRef);
-  
+
           if (faDoc.exists()) {
             const faData = faDoc.data();
             const clientsRef = collection(db, "users", faId, "clients");
             const querySnapshot = await getDocs(clientsRef);
             const totalClients = querySnapshot.size;
-  
+
             currentClientFA.value = {
               ...faData,
               totalClients,
-              adviceAvailable: faData.adviceAvailable || false,
-              adviceDate: faData.adviceDate || "",
-              adviceFileURL: faData.adviceFileURL || null,
+              adviceAvailable: clientData.adviceAvailable || false,
+              adviceDate: clientData.adviceDate || "",
+              adviceFileURL: clientData.adviceFileURL || null,
+              adviceText: clientData.adviceText || "",
             };
           }
         }
       }
+
     } catch (error) {
       console.error("Error fetching FA:", error);
     }
