@@ -101,7 +101,7 @@ const submitAdvice = async () => {
       timestamp: new Date(),
     });
 
-    submitMessage.value = '✅ Advice successfully submitted!';
+    submitMessage.value = '✔️ Advice successfully submitted!';
     submitError.value = false;
     clearForm();
   } catch (error) {
@@ -117,6 +117,16 @@ onMounted(fetchClients);
 </script>
 
 <style scoped>
+textarea:focus, input:focus {
+  outline: 0.7px solid #5f83ad; 
+  border-radius: 4px; 
+}
+
+select:focus {
+  outline: 0.7px solid #5f83ad; /* Change the border color */
+  border-radius: 4px; /* Optional: Add rounded corners */
+}
+
 .give-advice-container {
   max-width: 600px;
   margin: 40px auto;
@@ -142,13 +152,17 @@ onMounted(fetchClients);
   margin-bottom: 20px;
 }
 
+.label-input:focus {
+  outline: none; 
+}
+
 .submit-btn {
-  padding: 10px 20px;
-  background-color: #4ca1ff;
+  padding: 8px 25px;
+  background-color: #5f83ad;
   color: white;
   border: none;
   border-radius: 25px;
-  font-size: 14px;
+  font-size: 13px;
   cursor: pointer;
 }
 

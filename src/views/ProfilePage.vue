@@ -96,7 +96,7 @@ h1 {
 }
 
 .profile-info {
-  background: white;
+  background: rgb(251, 248, 243);
   padding: 20px;
   border-radius: 10px;
   box-shadow: 2px 2px 10px rgba(0, 0, 0, 0.1);
@@ -112,15 +112,16 @@ h1 {
 
 .settings-btn {
   margin-top: 20px;
-  padding: 10px 15px;
+  padding: 7px 15px;
   background-color: grey;
   color: white;
   border: none;
   border-radius: 5px;
   cursor: pointer;
+  font-size: 12px;
 }
 
 .settings-btn:hover {
-  background-color: #0056b3;
+  background-color: #707070;
 }
 </style>

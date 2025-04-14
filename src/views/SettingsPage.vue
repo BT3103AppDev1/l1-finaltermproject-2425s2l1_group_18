@@ -440,19 +440,21 @@ h2 {
 }
 
 button {
-    width: 100%;
+    width: 85%;
     padding: 10px;
     border-radius: 20px;
     border: 1px solid black;
-    background-color: #f8f1e8;
-    font-size: 16px;
+    background-color: #e4e4e3;
+    font-size: 14px;
     cursor: pointer;
     transition: 0.3s;
     margin-bottom: 30px;
+    font-family: inherit;
+
 }
 
 button:hover {
-    background-color: #ded3c0; /* added slight colour change */
+    background-color: #f4d3f9; 
 }
 
 .modal-overlay {
@@ -494,8 +496,8 @@ button:hover {
 }
 
 .modal-buttons button {
-    padding: 10px 20px;
-    border: 1px solid black;
+    padding: 5px 20px;
+    border: 1px solid rgb(170, 169, 169);
     border-radius: 5px;
     cursor: pointer;
     transition: 0.3s;  
@@ -503,6 +505,6 @@ button:hover {
 }
 
 .modal-buttons button:hover {
-    background-color: #f8f1e8;
+    background-color: #b9b9b9;
 }
 </style>

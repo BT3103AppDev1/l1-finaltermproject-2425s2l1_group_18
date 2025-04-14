@@ -285,13 +285,14 @@
 
   .modal button {
     margin-top: 10px;
-    padding: 10px 20px;
-    background-color: #4ca1ff;
+    padding: 7px 20px;
+    background-color: #8aabd1;
     color: white;
     border: none;
     border-radius: 25px;
-    font-size: 14px;
+    font-size: 12px;
     cursor: pointer;
+    margin-right: 5px;
   }
 
   .modal button:hover {
@@ -341,7 +342,7 @@
 
   .advice-title {
     margin-bottom: 25px;
-    font-size: 18px; /* Adjust the font size as needed */
+    font-size: 18px; 
 }
   
   .advice-container h3 {
