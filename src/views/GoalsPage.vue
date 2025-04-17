@@ -28,7 +28,7 @@
                         <button @click="saveGoal(category)">Save</button>
                     </div>
                     <div :class="getStatusClass(spending[category], goal)" class="goal-status">
-                        {{ getStatusMessage(spending[category], goal) }}
+                        {{ getStatusMessage(spending[category], goal,category) }}
                     </div>
                 </div>
             </div>
@@ -64,11 +64,54 @@ const totalBudget = computed(() => {
     return Object.values(spendingGoals.value).reduce((sum, goal) => sum + goal, 0);
 });
 
-const getStatusMessage = (spent, goal) => {
-    if (spent > goal) return "Exceeded Limit! Watch your budget in other areas.";
-    if (spent >= goal * 0.9) return "Near Limit! Watch your spendings.";
-    return "Meeting Expectation! Well done.";
+const getStatusMessage = (spent, goal, category) => {
+  const percentage = spent / goal;
+
+  const tips = {
+    Food: {
+      overspent: "You've overspent on food! Try eating at home more.",
+      "near-limit": "You're close to your food budget. Cook more to save!",
+      meeting: "Great job managing your food spending!",
+    },
+    Transport: {
+      overspent: "You've overspent on transport! Try carpooling or cycling.",
+      "near-limit": "Almost at your transport limit. Consider fewer trips.",
+      meeting: "Efficient transport usage. Keep it up!",
+    },
+    Utilities: {
+      overspent: "You've overspent on utilities! Reduce AC or light usage.",
+      "near-limit": "You're close to your utilities budget. Be mindful of energy use.",
+      meeting: "You're saving well on utilities!",
+    },
+    Shopping: {
+      overspent: "Overspent on shopping! Hold off on impulse buys.",
+      "near-limit": "Almost at your shopping limit. Prioritize essentials.",
+      meeting: "Smart shopping this month!",
+    },
+    Groceries: {
+      overspent: "Grocery spending high! Make a list and stick to it.",
+      "near-limit": "You're close to your grocery budget. Shop wisely.",
+      meeting: "You're managing groceries well.",
+    },
+    Others: {
+      overspent: "Spending too much on miscellaneous items!",
+      "near-limit": "Close to the 'Others' budget. Evaluate your needs.",
+      meeting: "Miscellaneous spending under control.",
+    },
+    default: {
+      overspent: "You've overspent this month.",
+      "near-limit": "You're close to your budget limit.",
+      meeting: "You're on track!",
+    }
+  };
+
+  const msgSet = tips[category] || tips.default;
+
+  if (spent > goal) return msgSet.overspent;
+  if (percentage >= 0.9) return msgSet["near-limit"];
+  return msgSet.meeting;
 };
+
 
 const getStatusClass = (spent, goal) => {
     if (spent > goal) return "exceeded";
