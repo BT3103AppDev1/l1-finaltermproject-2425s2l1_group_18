@@ -24,6 +24,7 @@
               <p><strong>Savings Target:</strong> {{ selectedClient.savingTarget }}</p>
               <p><strong>Gender:</strong> {{ selectedClient.gender }}</p>
               <p><strong>Age:</strong> {{ selectedClient.age }}</p>
+              <p><strong>Meeting Target:</strong> {{ selectedClient.isMeetingTarget }}</p>
               <button @click="closeModal">Close</button>
             </div>
           </div>
@@ -434,4 +435,104 @@ label {
   min-width: 300px;
   margin: 10px;
 }
+ul {
+  list-style-type: none;
+  padding: 0;
+  margin: 1rem 0;
+}
+
+li {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background-color: #f8f9fa;
+  border: 1px solid #e0e0e0;
+  border-radius: 8px;
+  padding: 12px 16px;
+  margin-bottom: 10px;
+  transition: background-color 0.3s ease;
+}
+
+li:hover {
+  background-color: #eef2f7;
+}
+
+button {
+  background-color: #007bff;
+  color: white;
+  border: none;
+  padding: 8px 14px;
+  border-radius: 5px;
+  cursor: pointer;
+  font-size: 0.9rem;
+  transition: background-color 0.3s ease;
+}
+
+button:hover {
+  background-color: #0056b3;
+}
+.modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.5); /* semi-transparent dark background */
+  backdrop-filter: blur(4px); /* subtle blur for glassmorphism */
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000;
+}
+
+.modal {
+  background-color: #ffffff;
+  padding: 2rem;
+  border-radius: 12px;
+  max-width: 500px;
+  width: 90%;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.2);
+  animation: fadeIn 0.3s ease-out;
+}
+
+.modal h3 {
+  margin-top: 0;
+  margin-bottom: 1rem;
+  font-size: 1.4rem;
+  color: #333;
+}
+
+.modal p {
+  margin: 0.5rem 0;
+  font-size: 1rem;
+  color: #555;
+}
+
+.modal button {
+  margin-top: 1.5rem;
+  padding: 10px 18px;
+  background-color: #dc3545;
+  color: white;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+.modal button:hover {
+  background-color: #c82333;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(-10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+
 </style>
