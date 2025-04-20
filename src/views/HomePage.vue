@@ -35,6 +35,26 @@
             <h3>Clients Meeting Target</h3>
             <pie-chart :data="clientTargetPieChartData" :download="true" :colors="['#008000', '#ff0000']"/>
           </div>
+          <!-- Table: Clients Not Meeting Targets -->
+          <div class="not-meeting-table">
+            <h3>Clients Not Meeting Their Target</h3>
+            <table v-if="clientsNotMeetingTarget.length">
+              <thead>
+                <tr>
+                  <th>Username</th>
+                  <th>Email</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr v-for="client in clientsNotMeetingTarget" :key="client.id">
+                  <td>{{ client.username }}</td>
+                  <td>{{ client.email }}</td>
+                </tr>
+              </tbody>
+            </table>
+            <p v-else>No clients are currently below their targets 🎉</p>
+          </div>
+
         </div>
 
       </div>
@@ -46,6 +66,10 @@
             {{ month }}
           </option>
         </select>
+
+        <p v-if="totalExpenses > totalBudget" style="color: red; font-weight: bold; margin-top: 10px;">
+          ⚠️ You have exceeded your budget for this month!
+        </p>
         
         <h1> Total budget: {{ totalBudget }}</h1> <br>
 
@@ -262,6 +286,10 @@ const getTotalClients = async () => {
 const selectedClient = ref(null);
 const clients = ref([]); // To store the list of clients associated with the FA
 
+const clientsNotMeetingTarget = computed(() => {
+  return clients.value.filter(client => !client.isMeetingTarget);
+});
+
 const fetchClients = async () => {
   const user = auth.currentUser;
   if (!user) {
@@ -272,15 +300,36 @@ const fetchClients = async () => {
   try {
     const clientsRef = collection(db, "users", user.uid, "clients");
     const querySnapshot = await getDocs(clientsRef);
-    clients.value = querySnapshot.docs.map((doc) => ({
-      id: doc.id,
-      ...doc.data(), // Fetch all fields
-    }));
+
+    const fetchedClients = [];
+
+    for (const docSnap of querySnapshot.docs) {
+      const clientMeta = docSnap.data();
+      const clientId = docSnap.id;
+
+      const clientDocRef = doc(db, "users", clientId);
+      const clientDoc = await getDoc(clientDocRef);
+
+      if (clientDoc.exists()) {
+        const fullClientData = clientDoc.data();
+        fetchedClients.push({
+          id: clientId,
+          username: fullClientData.username,
+          email: fullClientData.email,
+          isMeetingTarget: fullClientData.isMeetingTarget,
+          ...fullClientData
+        });
+      }
+    }
+
+    clients.value = fetchedClients;
   } catch (error) {
     console.error("Error fetching clients:", error);
   }
+
   updateClientTargetPieChartData();
 };
+
 
 
 // View client details in a modal by polling Firestore
