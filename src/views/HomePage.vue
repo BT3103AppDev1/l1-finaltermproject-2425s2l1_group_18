@@ -73,19 +73,12 @@
         
         <h1> Total budget: {{ totalBudget }}</h1> <br>
 
-        <!-- Pie Charts Container -->
-        <div class="charts-container">
           <!-- Pie Chart: Total Spent vs. Total Budget -->
           <div class="chart">
             <h3>Budget Usage</h3>
             <pie-chart :data="budgetPieChartData" :download="true" :colors="['#ff0000','#008000']"/>
           </div>
-          <!-- Pie Chart: Spending by Category -->
-          <div class="chart">
-            <h3>Spending by Category</h3>
-            <pie-chart :data="pieChartData" :download="true" />
-          </div>
-        </div>
+
 
         <!-- Table: Budget Summary -->
         <h3>Budget Summary</h3>
@@ -106,6 +99,12 @@
           </tbody>
         </table>
         <br>
+
+        <!-- Pie Chart: Spending by Category -->
+        <div class="chart">
+            <h3>Spending by Category</h3>
+            <pie-chart :data="pieChartData" :download="true" />
+          </div>
 
         <!-- Table: Spending Breakdown -->
         <h3>Breakdown by Category</h3>
