@@ -116,7 +116,19 @@
               <th>Amount ($)</th>
             </tr>
           </thead>
+          <tbody>
+            <tr v-for="(amount, category) in categoryTotals" :key="category">
+              <td>{{ category }}</td>
+              <td>${{ amount.toFixed(2) }}</td>
+            </tr>
+          </tbody>
         </table>
+
+        <!-- Line Chart: Spending Over Days of the Month -->
+        <div class="chart">
+          <h3>Spending Over Days of the Month</h3>
+          <line-chart :data="lineChartData" :download="true" />
+        </div>
       </div> <!-- Closing v-else -->
     </div> <!-- Closing container -->
   </div> <!-- Closing root div -->
