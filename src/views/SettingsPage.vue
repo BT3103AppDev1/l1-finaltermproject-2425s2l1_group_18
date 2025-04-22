@@ -16,7 +16,6 @@
             </div>
         </div>
 
-        <!-- Password Edit Popup -->
         <div v-if="showChangePassword" class="modal-overlay">
             <div class="modal">
                 <h3>Edit Password</h3>
@@ -28,7 +27,6 @@
             </div>
         </div>
 
-        <!-- Username Edit Popup -->
         <div v-if="showEditUsername" class="modal-overlay">
             <div class="modal">
                 <h3>Edit Username</h3>
@@ -41,7 +39,6 @@
             </div>
         </div>
 
-        <!-- Age Edit Popup -->
         <div v-if="showEditAge" class="modal-overlay">
             <div class="modal">
                 <h3>Edit Age</h3>
@@ -54,7 +51,6 @@
             </div>
         </div>
 
-        <!-- Gender Edit Popup -->
         <div v-if="showEditGender" class="modal-overlay">
             <div class="modal">
                 <h3>Edit Gender</h3>
@@ -72,7 +68,6 @@
             </div>
         </div>
 
-        <!-- Representative Number Edit Popup -->
         <div v-if="showEditRepNumber" class="modal-overlay">
             <div class="modal">
                 <h3>Edit Representative Number</h3>
@@ -85,7 +80,6 @@
             </div>
         </div>
 
-        <!-- About Edit Popup -->
         <div v-if="showEditAbout" class="modal-overlay">
             <div class="modal">
                 <h3>Edit About</h3>
@@ -98,7 +92,6 @@
             </div>
         </div>
 
-        <!-- Company Edit Popup -->
         <div v-if="showEditCompany" class="modal-overlay">
             <div class="modal">
                 <h3>Edit Company</h3>
@@ -111,7 +104,6 @@
             </div>
         </div>
 
-        <!-- Savings Target Edit Popup -->
         <div v-if="showEditSavingsTarget" class="modal-overlay">
             <div class="modal">
                 <h3>Edit Savings Target</h3>
@@ -144,7 +136,6 @@ const showEditAbout = ref(false);
 const showEditCompany = ref(false);
 const showEditSavingsTarget = ref(false);
 
-// Reactive variables for user data
 const currentUsername = ref('');
 const currentAge = ref('');
 const currentGender = ref('');
@@ -164,7 +155,6 @@ const newSavingsTarget = ref('');
 const userProfile = ref({});
 const router = useRouter();
 
-// Fetch user data on page load
 onMounted(async () => {
     try {
         console.log('Fetching user data...');
@@ -199,7 +189,6 @@ onMounted(async () => {
     }
 });
 
-// Change password
 const changePassword = async () => {
     if (!newPassword.value.trim() || newPassword.value.length < 6) {
         alert('Password must be at least 6 characters long!');
@@ -210,25 +199,21 @@ const changePassword = async () => {
         const user = auth.currentUser;
         if (!user) throw new Error('No user signed in.');
 
-        // Check if the user's email is verified
         if (!user.emailVerified) {
-            // Send a verification email
             await sendEmailVerification(user);
             alert('A verification email has been sent to your email address. Please verify it before changing your password.');
 
-            // Poll for email verification
             const interval = setInterval(async () => {
-                await reload(user); // Reload the user's authentication state
+                await reload(user); 
                 if (user.emailVerified) {
-                    clearInterval(interval); // Stop polling
+                    clearInterval(interval); 
                     alert('Your email has been verified! You can now change your password.');
                 }
-            }, 3000); // Check every 3 seconds
+            }, 3000); 
 
-            return; // Stop further execution until the email is verified
+            return; 
         }
 
-        // Update the password
         await updatePassword(user, newPassword.value);
 
         alert('Password updated successfully!');
@@ -244,7 +229,6 @@ const changePassword = async () => {
     }
 };
 
-// Update username
 const updateUsername = async () => {
     if (!newUsername.value.trim()) {
         alert('Username cannot be empty');
@@ -255,7 +239,6 @@ const updateUsername = async () => {
         const user = auth.currentUser;
         if (!user) throw new Error('No user signed in.');
 
-        // Check if the username is already taken
         const usersRef = collection(db, 'users');
         const q = query(usersRef, where('username', '==', newUsername.value));
         const querySnapshot = await getDocs(q);
@@ -265,10 +248,8 @@ const updateUsername = async () => {
             return;
         }
 
-        // Update auth profile
         await updateProfile(user, { displayName: newUsername.value });
 
-        // Update Firestore
         const userDoc = doc(db, 'users', user.uid);
         await updateDoc(userDoc, { username: newUsername.value });
 
@@ -385,7 +366,6 @@ const updateCompany = async () => {
     }
 };
 
-// Update savings target
 const updateSavingsTarget = async () => {
     if (!newSavingsTarget.value || isNaN(newSavingsTarget.value) || newSavingsTarget.value <= 0) {
         alert('Please enter a valid savings target');
@@ -396,7 +376,6 @@ const updateSavingsTarget = async () => {
         const user = auth.currentUser;
         if (!user) throw new Error('No user signed in.');
 
-        // Update Firestore
         const userDoc = doc(db, 'users', user.uid);
         await updateDoc(userDoc, { savingTarget: newSavingsTarget.value });
 

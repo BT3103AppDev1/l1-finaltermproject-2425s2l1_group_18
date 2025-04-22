@@ -103,7 +103,7 @@ body, html {
 }
 
 .fa-navbar {
-    width: 40%; /* Adjust the width for FA users */
+    width: 40%;
     justify-content: center;
     gap: 20px;
 }

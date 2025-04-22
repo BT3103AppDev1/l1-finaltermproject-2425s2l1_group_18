@@ -15,7 +15,6 @@
           </li>
         </ul>
         <div class="find-client-container">
-          <!-- Modal for viewing client details -->
           <div v-if="selectedClient" class="modal-overlay" @click.self="closeModal">
             <div class="modal">
               <h3>Client Details</h3>
@@ -28,14 +27,12 @@
               <button @click="closeModal">Close</button>
             </div>
           </div>
-        </div> <!-- Closing find-client-container -->
+        </div> 
         <div class="charts-container">
-          <!-- Pie Chart: Total Spent vs. Total Budget -->
           <div class="chart">
             <h3>Clients Meeting Target</h3>
             <pie-chart :data="clientTargetPieChartData" :download="true" :colors="['#008000', '#ff0000']"/>
           </div>
-          <!-- Table: Clients Not Meeting Targets -->
           <div class="not-meeting-table">
             <h3>Clients Not Meeting Their Target</h3>
             <table v-if="clientsNotMeetingTarget.length">
@@ -59,7 +56,6 @@
 
       </div>
       <div v-else>
-        <!-- Month Selector -->
         <label>Select Month:</label>
         <select v-model="selectedMonth" @change="updateCharts">
           <option v-for="month in availableMonths" :key="month" :value="month">
@@ -72,15 +68,10 @@
         </p>
         
         <h1> Total budget: {{ totalBudget }}</h1> <br>
-
-          <!-- Pie Chart: Total Spent vs. Total Budget -->
           <div class="chart">
             <h3>Budget Usage</h3>
             <pie-chart :data="budgetPieChartData" :download="true" :colors="['#ff0000','#008000']"/>
           </div>
-
-
-        <!-- Table: Budget Summary -->
         <h3>Budget Summary</h3>
         <table>
           <tbody>
@@ -100,13 +91,11 @@
         </table>
         <br>
 
-        <!-- Pie Chart: Spending by Category -->
         <div class="chart">
             <h3>Spending by Category</h3>
             <pie-chart :data="pieChartData" :download="true" />
           </div>
 
-        <!-- Table: Spending Breakdown -->
         <h3>Breakdown by Category</h3>
         <table>
           <thead>
@@ -123,14 +112,13 @@
           </tbody>
         </table>
 
-        <!-- Line Chart: Spending Over Days of the Month -->
         <div class="chart">
           <h3>Spending Over Days of the Month</h3>
           <line-chart :data="lineChartData" :download="true" />
         </div>
-      </div> <!-- Closing v-else -->
-    </div> <!-- Closing container -->
-  </div> <!-- Closing root div -->
+      </div> 
+    </div> 
+  </div> 
 </template>
 
 <script setup>
@@ -143,9 +131,9 @@ const db = getFirestore();
 const auth = getAuth();
 
 const expenses = ref([]);
-const selectedMonth = ref(""); // Format: "MM/YYYY"
-const availableMonths = ref([]); // List of available months for selection
-const clientTargetPieChartData = ref([]); // Data for spending targets pie chart
+const selectedMonth = ref(""); 
+const availableMonths = ref([]); 
+const clientTargetPieChartData = ref([]); 
 
 const pieChartData = ref([]);
 const lineChartData = ref([]);
@@ -155,7 +143,6 @@ const categoryTotals = ref({});
 const userProfile = ref({});
 const totalClients = ref(0);
 
-// Get the current user document ID
 const getUserDocId = async () => {
   const user = auth.currentUser;
   if (!user) return null;
@@ -172,7 +159,6 @@ const getUserDocId = async () => {
   return null;
 };
 
-// Fetch expenses for logged-in user
 const fetchExpenses = async () => {
   const userDocId = await getUserDocId();
   if (!userDocId) return;
@@ -189,12 +175,10 @@ const fetchExpenses = async () => {
   updateCharts();
 };
 
-//get total expenses
 const totalExpenses = computed(() => {
   return Object.values(categoryTotals.value).reduce((sum, val) => sum + val, 0);
 });
 
-// Generate available months from expenses
 const generateAvailableMonths = () => {
   const uniqueMonths = new Set();
   expenses.value.forEach(expense => {
@@ -207,7 +191,7 @@ const generateAvailableMonths = () => {
 
   availableMonths.value = Array.from(uniqueMonths).sort((a, b) => new Date(`01/${b}`) - new Date(`01/${a}`));
   if (availableMonths.value.length > 0) {
-    selectedMonth.value = availableMonths.value[0]; // Default to latest month
+    selectedMonth.value = availableMonths.value[0]; 
   }
 };
 
@@ -232,18 +216,15 @@ const fetchTotalBudget = async () => {
   updateBudgetPieChart();
 };
 
-// Update Pie Chart & Line Chart
 const updateCharts = () => {
   if (!selectedMonth.value) return;
 
-  // Filter expenses for the selected month
   const filteredExpenses = expenses.value.filter(expense => {
     const date = new Date(expense.date);
     const expenseMonth = `${String(date.getMonth() + 1).padStart(2, "0")}/${date.getFullYear()}`;
     return expenseMonth === selectedMonth.value;
   });
 
-  // Aggregate spending by category (for Pie Chart & Table)
   const categoryData = {};
   filteredExpenses.forEach(expense => {
     if (!categoryData[expense.category]) {
@@ -255,7 +236,6 @@ const updateCharts = () => {
   pieChartData.value = Object.entries(categoryData);
   categoryTotals.value = categoryData;
 
-  // Aggregate spending by day (for Line Chart)
   const dailyData = {};
   filteredExpenses.forEach(expense => {
     const day = new Date(expense.date).getDate();
@@ -267,12 +247,11 @@ const updateCharts = () => {
   updateBudgetPieChart();
 };
 
-//for the budget pie chart
 const updateBudgetPieChart = () => {
-  if (totalBudget.value === 0) return; // Avoid division by zero
+  if (totalBudget.value === 0) return; 
 
   const spent = totalExpenses.value;
-  const remaining = Math.max(totalBudget.value - spent, 0); // Ensure non-negative
+  const remaining = Math.max(totalBudget.value - spent, 0); 
   const isMeetingTarget = spent <= totalBudget.value;
   updateDoc(doc(db, "users", userProfile.value.uid), {
     isMeetingTarget: isMeetingTarget,
@@ -295,7 +274,7 @@ const getTotalClients = async () => {
 };
 
 const selectedClient = ref(null);
-const clients = ref([]); // To store the list of clients associated with the FA
+const clients = ref([]); 
 
 const clientsNotMeetingTarget = computed(() => {
   return clients.value.filter(client => !client.isMeetingTarget);
@@ -341,16 +320,13 @@ const fetchClients = async () => {
   updateClientTargetPieChartData();
 };
 
-
-
-// View client details in a modal by polling Firestore
 const viewClient = async (client) => {
   try {
-    const clientDocRef = doc(db, "users", client.id); // Reference to the client's user document
-    const clientDoc = await getDoc(clientDocRef); // Fetch the document from Firestore
+    const clientDocRef = doc(db, "users", client.id); 
+    const clientDoc = await getDoc(clientDocRef); 
 
     if (clientDoc.exists()) {
-      selectedClient.value = { id: client.id, ...clientDoc.data() }; // Update selectedClient with the latest data
+      selectedClient.value = { id: client.id, ...clientDoc.data() }; 
     } else {
       console.error("Client document does not exist.");
     }
@@ -359,7 +335,6 @@ const viewClient = async (client) => {
   }
 };
 
-// Close the modal
 const closeModal = () => {
     selectedClient.value = null;
 };
@@ -370,7 +345,6 @@ const updateClientTargetPieChartData = async () => {
 
   for (const client of clients.value) {
     try {
-      // Fetch the latest client document from Firestore
       const clientDocRef = doc(db, "users", client.id);
       const clientDoc = await getDoc(clientDocRef);
 
@@ -389,7 +363,6 @@ const updateClientTargetPieChartData = async () => {
 
   const notMeeting = totalClients - meetingTargets;
 
-  // Update the pie chart data
   clientTargetPieChartData.value = [
     ["Meeting", meetingTargets, "#f44336"], // Green for meeting targets
     ["Not Meeting", notMeeting, "#4caf50"], // Red for not meeting targets
@@ -406,7 +379,6 @@ onMounted(async () => {
 </script>
 
 <style scoped>
-/* Set background color */
 body, html {
   background-color: rgb(251, 248, 243);
   margin: 0;
@@ -415,7 +387,6 @@ body, html {
   height: 100%;
 }
 
-/* Container styling */
 .container {
   max-width: 800px;
   margin: auto;
@@ -430,7 +401,6 @@ body, html {
     text-align: center;
 }
 
-/* Table styling */
 table {
   width: 100%;
   border-collapse: collapse;
@@ -447,7 +417,7 @@ th, td {
 }
 
 .total-row {
-  background-color: #f0f0f0; /* Light grey */
+  background-color: #f0f0f0; 
   font-weight: bold;
 }
 
@@ -456,13 +426,13 @@ th {
   font-weight: bold;
 }
 th {
-  width: 50%; /* Adjust the width of the first column */
+  width: 50%; 
 }
 
 td {
-  width: 50%; /* Adjust the width of the second column */
+  width: 50%; 
 }
-/* Dropdown styling */
+
 select {
   margin-bottom: 15px;
   padding: 8px;
@@ -471,19 +441,16 @@ select {
   border: 1px solid #ccc;
 }
 
-/* Chart section styling */
 h3 {
   margin-top: 20px;
   color: #333;
 }
 
-/* Centering the dropdown */
 label {
   font-weight: bold;
   margin-right: 10px;
 }
 
-/* Flexbox container for charts */
 .charts-container {
   display: flex;
   justify-content: space-around;
@@ -537,8 +504,8 @@ button:hover {
   left: 0;
   width: 100%;
   height: 100%;
-  background-color: rgba(0, 0, 0, 0.5); /* semi-transparent dark background */
-  backdrop-filter: blur(4px); /* subtle blur for glassmorphism */
+  background-color: rgba(0, 0, 0, 0.5); 
+  backdrop-filter: blur(4px); 
   display: flex;
   justify-content: center;
   align-items: center;
@@ -593,6 +560,4 @@ button:hover {
     transform: translateY(0);
   }
 }
-
-
 </style>

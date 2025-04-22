@@ -36,7 +36,7 @@
                 </select>
             </div>
 
-            <!-- Expenses Table -->
+            
             <table class="expenses-table">
                 <thead>
                     <tr>
@@ -80,13 +80,13 @@
                 </tbody>
             </table>
 
-            <!-- Add Expense Button Container -->
+            
             <div class="add-expense-container">
                 <button class="add-expense-btn" @click="openAddExpenseModal">Add Expense</button>
             </div>
         </div>
 
-        <!-- Add / Edit Expense Modal -->
+        
         <div v-if="showAddExpenseModal" class="modal">
             <div class="modal-content smaller-modal">
                 <h3 class="modal-title">{{ isEditing ? 'Edit Expense' : 'New Expense' }}</h3>
@@ -119,7 +119,7 @@
                     <option value="Recurring">Recurring</option>
                 </select>
 
-                <!-- Recurrence Options -->
+                
                 <div v-if="newExpense.type === 'Recurring'">
                     <label for="recurrenceFrequency">Recurrence Frequency</label>
                     <select id="recurrenceFrequency" v-model="newExpense.recurrenceFrequency">
@@ -141,18 +141,18 @@
             </div>
         </div>
 
-        <!-- Delete Confirmation Modal -->
+        
         <div v-if="showDeleteModal" class="modal-overlay">
             <div class="modal smaller-modal">
                 <h3 class="modal-title">Are you sure you want to delete?</h3>
                 <div class="button-group">
-                    <!-- If the expense is recurring, show all three buttons -->
+                    
                     <div v-if="deleteExpenseDetails.isRecurring">
                         <button @click="handleDelete('all')">Delete All</button>
                         <button @click="handleDelete('this')">Delete This Only</button>
                         <button @click="showDeleteModal = false" class="cancel-button">Cancel</button>
                     </div>
-                    <!-- If the expense is one-time, show only Delete and Cancel buttons -->
+                    
                     <div v-else>
                         <button @click="handleDelete('this')">Delete</button>
                         <button @click="showDeleteModal = false" class="cancel-button">Cancel</button>
@@ -273,7 +273,6 @@ const handleDelete = async (action) => {
     fetchExpenses();
 };
 
-// Find the Correct User Document
 const getUserDocId = async () => {
     const user = auth.currentUser;
     if (!user) return null;
@@ -288,7 +287,6 @@ const getUserDocId = async () => {
     return null;
 };
 
-// Fetch Expenses for Logged-in User
 const fetchExpenses = async () => {
     const userDocId = await getUserDocId();
     if (!userDocId) return;
@@ -299,7 +297,6 @@ const fetchExpenses = async () => {
     expenses.value = querySnapshot.docs.map((doc) => ({ id: doc.id, ...doc.data() }));
 };
 
-// Save New Expense
 const saveExpense = async () => {
     const userDocId = await getUserDocId();
     if (!userDocId) {
@@ -364,7 +361,6 @@ const saveExpense = async () => {
     fetchExpenses();
 };
 
-// Edit Expense
 const editExpense = (expense) => {
     newExpense.value = { ...expense };
     isEditing.value = true;
@@ -372,7 +368,6 @@ const editExpense = (expense) => {
     showAddExpenseModal.value = true;
 };
 
-// Update Expense
 const updateExpense = async () => {
     const userDocId = await getUserDocId();
     if (!userDocId || !editingExpenseId.value) return;
@@ -386,16 +381,13 @@ const updateExpense = async () => {
     fetchExpenses();
 };
 
-// Delete Expense
 const deleteExpense = async (id, isRecurring = false) => {
     const userDocId = await getUserDocId();
     if (!userDocId) return;
 
     if (isRecurring) {
-        // Show a confirmation dialog for recurring expenses
         const deleteOption = confirm("Do you want to delete all occurrences of this recurring expense? Click 'OK' for all, 'Cancel' for just this one.");
         if (deleteOption) {
-            // Delete all occurrences of the recurring expense
             try {
                 const expensesRef = collection(db, "users", userDocId, "expenses");
                 const q = query(expensesRef, where("title", "==", expenses.value.find((e) => e.id === id).title));
@@ -413,7 +405,6 @@ const deleteExpense = async (id, isRecurring = false) => {
                 alert("Failed to delete all occurrences. Please try again.");
             }
         } else {
-            // Delete only the specific occurrence
             try {
                 const expenseRef = doc(db, "users", userDocId, "expenses", id);
                 await deleteDoc(expenseRef);
@@ -425,7 +416,6 @@ const deleteExpense = async (id, isRecurring = false) => {
             }
         }
     } else {
-        // Delete one-time expense directly
         try {
             const expenseRef = doc(db, "users", userDocId, "expenses", id);
             await deleteDoc(expenseRef);
@@ -440,7 +430,6 @@ const deleteExpense = async (id, isRecurring = false) => {
     fetchExpenses(); // Refresh the expenses list
 };
 
-// Filter Expenses by MM/YYYY
 const filteredExpenses = computed(() => {
     return expenses.value.filter((expense) => {
         const expenseDate = new Date(expense.date);
@@ -451,7 +440,6 @@ const filteredExpenses = computed(() => {
     });
 });
 
-// Sort Expenses
 const sortedExpenses = computed(() => {
     let sorted = [...filteredExpenses.value];
     switch (sortBy.value) {
@@ -476,7 +464,6 @@ const sortedExpenses = computed(() => {
     }
 });
 
-// Get Available Years
 const availableYears = computed(() => {
     return Array.from(new Set(expenses.value.map((exp) => new Date(exp.date).getFullYear().toString()))).sort(
         (a, b) => b - a
@@ -487,7 +474,6 @@ onMounted(fetchExpenses);
 </script>
 
 <style scoped>
-/* General page styling */
 body, html {
     background-color: rgb(251, 248, 243);
     margin: 0;
@@ -505,7 +491,6 @@ h2 {
     font-family: "Georgia", serif;
 }
 
-/* General container styling */
 .container {
     width: 100%;
     height: 100vh;
@@ -521,7 +506,7 @@ h2 {
     align-items: center;
     width: 100%;
     margin-top: 30px;
-    margin-bottom: 60px; /* Add margin to separate from the table */
+    margin-bottom: 60px; 
 }
 
 .header h2 {
@@ -538,7 +523,6 @@ h2 {
     top: -63px; 
 }
 
-/* Table styling */
 table {
     width: 100%;
     border-collapse: collapse;
@@ -560,14 +544,12 @@ th {
     font-weight: bold;
 }
 
-/* Recurring Expenses Row Color */
 tr.recurring {
-    background-color: #ffebc3; /* Light Orange */
+    background-color: #ffebc3; 
 }
 
-/* One-Time Expenses Row Color */
 tr.one-time {
-    background-color: #c3ffc3; /* Lime Green */
+    background-color: #c3ffc3; 
 }
 
 .category-badge {
@@ -587,7 +569,6 @@ tr.one-time {
 .category-badge.groceries { background-color: #83da87; }  
 .category-badge.others { background-color: #ffdd6e; }     
 
-/* Button styling */
 button {
     padding: 8px 14px;
     border: 0.4px black solid;
@@ -600,7 +581,6 @@ button:hover {
     opacity: 0.8;
 }
 
-/* Edit and Remove Buttons */
 button:nth-child(1) {
     background: #a8eaf8;
     color: black;
@@ -611,14 +591,12 @@ button:nth-child(2) {
     color: black;
 }
 
-/* Centering the Add Expense Button */
 .add-expense-container {
     display: flex;
     justify-content: center;
     margin-top: 20px;
 }
 
-/* Add Expense Button */
 .add-expense-btn {
     background: #a8eaf8;
     color: white;
@@ -650,7 +628,6 @@ button:nth-child(2) {
     background-color: rgb(251, 248, 243);
 }
 
-/* Dropdown styling */
 select {
     padding: 8px;
     border: 1px solid #ccc;
@@ -660,56 +637,52 @@ select {
 }
 
 .expenses-table .actions-column {
-    padding-left: 50px; /* Adjust this value to move the column to the right */
+    padding-left: 50px; 
 }
 
-
-/* Modal Styling */
 .modal {
     position: fixed;
     top: 50%;
     left: 50%;
     transform: translate(-50%, -50%);
     background: white;
-    padding: 15px; /* Reduced padding */
-    border-radius: 8px; /* Slightly smaller border radius */
+    padding: 15px; 
+    border-radius: 8px; 
     box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.2);
-    width: 300px; /* Reduced width */
-    max-height: 80vh; /* Ensure it fits within the viewport */
-    overflow-y: auto; /* Add scrolling if content overflows */
-    font-size: 12px; /* Reduced font size */
+    width: 300px; 
+    max-height: 80vh; 
+    overflow-y: auto; 
+    font-size: 12px; 
 }
 
-/* Modal Content Styling */
 .modal-content input,
 .modal-content select {
     width: 100%;
-    padding: 6px 10px; /* Reduced padding */
-    margin: 8px 0; /* Reduced margin */
+    padding: 6px 10px; 
+    margin: 8px 0; 
     border: 1px solid #ccc;
     border-radius: 5px;
     box-sizing: border-box;
-    font-size: 12px; /* Reduced font size */
+    font-size: 12px; 
 }
 
 .modal-content {
     text-align: center;
 }
 
-/* Modal Buttons */
 .modal-button-group {
     display: flex;
     justify-content: center;
-    gap: 8px; /* Adjusted spacing between buttons */
+    gap: 8px; 
     margin-top: 10px;
 }
 
 .modal-button-group button {
-    padding: 6px 10px; /* Reduced padding */
-    font-size: 11px; /* Reduced font size */
+    padding: 6px 10px; 
+    font-size: 11px; 
     border-radius: 20px;
     background-color: #e5e4e4;
-    width: 40%; /* Adjusted button width */
+    width: 40%; 
 }
 
 .modal-button-group .cancel-button {
@@ -717,45 +690,43 @@ select {
     color: black;
 }
 
-/* Smaller Modal for Expense and Delete */
 .smaller-modal {
-    width: 280px; /* Reduced width for smaller modals */
-    padding: 10px; /* Reduced padding */
-    font-size: 12px; /* Reduced font size */
+    width: 280px; 
+    padding: 10px; 
+    font-size: 12px; 
 }
 
-/* Modal Title Styling */
 .modal-title {
-    font-size: 14px; /* Reduced font size */
+    font-size: 14px; 
     font-weight: bold;
-    margin-bottom: 8px; /* Reduced margin */
+    margin-bottom: 8px; 
     text-align: center;
 }
 
-/* Delete Modal Button Group */
+
 .button-group {
     display: flex;
-    justify-content: space-evenly; /* Ensure equal spacing between buttons */
-    align-items: center; /* Align the buttons vertically */
-    gap: 10px; /* Add consistent spacing between buttons */
+    justify-content: space-evenly; 
+    align-items: center; 
+    gap: 10px; 
     margin-top: 15px;
 }
 
 .button-group button {
-    flex: 1; /* Ensure buttons take equal space */
-    max-width: 120px; /* Set a consistent maximum width for buttons */
+    flex: 1; 
+    max-width: 120px; 
     text-align: center;
-    padding: 10px 15px; /* Adjust padding for better appearance */
-    font-size: 12px; /* Consistent font size */
-    border-radius: 25px; /* Rounded buttons */
+    padding: 10px 15px; 
+    font-size: 12px; 
+    border-radius: 25px; 
     background-color: #e5e4e4;
     border: 1px solid #ccc;
     cursor: pointer;
-    transition: background-color 0.3s ease, opacity 0.3s ease; /* Smooth hover effect */
+    transition: background-color 0.3s ease, opacity 0.3s ease; 
 }
 
 .button-group button:hover {
-    opacity: 0.9; /* Add hover effect */
+    opacity: 0.9; 
 }
 
 .button-group .cancel-button {
@@ -764,10 +735,9 @@ select {
 }
 
 .button-group .cancel-button:hover {
-    background-color: #f5bcbc; /* Slightly darker hover effect for cancel button */
+    background-color: #f5bcbc; 
 }
 
-/* Add/Edit Modal Labels */
 .modal-content label {
     display: block;
     margin-bottom: 5px;
@@ -775,7 +745,6 @@ select {
     text-align: left;
 }
 
-/* Dropdown alignment */
 .sort-container {
     display: flex;
     justify-content: flex-end;

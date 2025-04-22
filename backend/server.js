@@ -10,7 +10,6 @@ dotenv.config();
 const app = express();
 const upload = multer({ storage: multer.memoryStorage() });
 
-// 🔹 Function to retrieve credentials from Secret Manager
 async function getCredentials() {
   const client = new SecretManagerServiceClient();
   const [version] = await client.accessSecretVersion({
@@ -19,7 +18,6 @@ async function getCredentials() {
   return JSON.parse(version.payload.data.toString());
 }
 
-// 🔹 Initialize Google Vision API Client with Secret Manager credentials
 let client;
 async function initializeVisionClient() {
   try {
@@ -42,12 +40,9 @@ app.post("/api/scan-receipt", upload.single("file"), async (req, res) => {
       return res.status(400).json({ error: "No file uploaded" });
     }
 
-    // Ensure Vision API client is initialized
     if (!client) {
       return res.status(500).json({ error: "Vision API client not initialized yet" });
     }
-
-    // Send the image to Google Cloud Vision
     const [result] = await client.textDetection(req.file.buffer);
     const detections = result.textAnnotations;
 
@@ -56,9 +51,8 @@ app.post("/api/scan-receipt", upload.single("file"), async (req, res) => {
     }
 
     const extractedText = detections[0].description;
-    console.log("Raw OCR Text:", extractedText); // Debugging
+    console.log("Raw OCR Text:", extractedText); 
 
-    // Process OCR result to extract structured data
     const structuredData = extractReceiptData(extractedText);
 
     res.json(structuredData);
@@ -68,7 +62,6 @@ app.post("/api/scan-receipt", upload.single("file"), async (req, res) => {
   }
 });
 
-// 🔹 Function to extract structured receipt data
 function extractReceiptData(text) {
   const lines = text.split("\n");
 
@@ -90,19 +83,18 @@ function extractReceiptData(text) {
     let line = lines[i].trim();
     console.log(`🔹 Processing line: ${line}`);
 
-    // Ignore irrelevant lines (headers, locations, phone numbers, timestamps, dashes)
+
     if (
       line.toLowerCase().includes("thank you") ||
       line.toLowerCase().includes("visit") ||
       line.toLowerCase().includes("phone") ||
-      line.match(/\d{1,2}:\d{2} (AM|PM)/) || // Skip timestamps
-      line === "-" // Ignore separators
+      line.match(/\d{1,2}:\d{2} (AM|PM)/) || 
+      line === "-"
     ) {
       console.log(`❌ Skipping line: ${line}`);
       continue;
     }
 
-    // Extract date
     const dateMatch = line.match(dateRegex);
     if (dateMatch) {
       date = dateMatch[0];
@@ -110,7 +102,6 @@ function extractReceiptData(text) {
       continue;
     }
 
-    // Check if the line is a price
     if (priceRegex.test(line)) {
       detectedPrices.push(`$${line.match(priceRegex)[1]}`);
       console.log(`✅ Found Price: $${line.match(priceRegex)[1]}`);
@@ -118,7 +109,6 @@ function extractReceiptData(text) {
       continue;
     }
 
-    // Match items with **both name & price on same line** (like "1 x Pie $7.00")
     const itemWithPriceMatch = line.match(itemWithPriceRegex);
     if (itemWithPriceMatch) {
       let quantity = parseInt(itemWithPriceMatch[1]);
@@ -130,7 +120,6 @@ function extractReceiptData(text) {
       continue;
     }
 
-    // Match items that have valid quantities (e.g., "1x Burger", "2 x Soft Drink")
     const itemMatch = line.match(itemRegex);
     if (itemMatch) {
       let quantity = parseInt(itemMatch[1]);
@@ -141,22 +130,20 @@ function extractReceiptData(text) {
     }
   }
 
-  // Assign prices to items in order (skipping total)
   let priceIndex = 0;
   for (let i = 0; i < detectedItems.length; i++) {
     if (!detectedItems[i].price) {
       if (priceIndex < detectedPrices.length - 1) {
-        detectedItems[i].price = detectedPrices[priceIndex]; // Match price in order
+        detectedItems[i].price = detectedPrices[priceIndex]; 
         priceIndex++;
       } else {
-        detectedItems[i].price = "Unknown Price"; // If missing price
+        detectedItems[i].price = "Unknown Price"; 
       }
     }
   }
 
-  // Ensure the last detected price is stored as total (not as an item price)
   if (detectedPrices.length > 0) {
-    total = detectedPrices.pop(); // Last price is set as the total
+    total = detectedPrices.pop();
   }
 
   return { merchant, date, items: detectedItems, total };

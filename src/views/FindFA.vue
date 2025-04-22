@@ -2,7 +2,6 @@
     <Navbar />
     <div class="find-fa-container">
       <div class="columns">
-        <!-- Left: Search -->
         <div class="left-box">
           <h3>Search for Financial Advisors</h3>
           <input
@@ -21,7 +20,6 @@
           </ul>
         </div>
   
-        <!-- Right: Received Requests -->
         <div class="right-box">
       <h3>Received Requests</h3>
       <ul>
@@ -36,8 +34,6 @@
       </ul>
     </div>
   </div>
-  
-      <!-- Modal -->
       <div v-if="selectedFA" class="modal-overlay" @click.self="closeModal">
         <div class="modal">
           <h3>FA Details</h3>
@@ -310,10 +306,8 @@
 
   .button-group {
   display: flex;
-  gap: 10px; /* Adjust gap between buttons */
-}
-  
-  /* Modal styles */
+  gap: 10px; 
+  }
   .modal-overlay {
     position: fixed;
     top: 0;

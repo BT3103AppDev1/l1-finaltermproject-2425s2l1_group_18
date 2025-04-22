@@ -4,20 +4,16 @@
     <div class="upload-container">
       <h2>Upload Receipt</h2>
 
-      <!-- Custom File Input -->
       <input type="file" accept="image/*" @change="handleFileUpload" id="file-input" class="custom-file-input"/>
       <label for="file-input" class="custom-file-label">
         Choose File
       </label>
-
-      <!-- Display Selected File Name -->
       <input v-if="selectedFile" type="text" :value="selectedFile.name" class="file-name-input" readonly />
 
       <button v-if="selectedFile" @click="processReceipt" :disabled="isLoading">
         {{ isLoading ? "Scanning..." : "Scan Receipt" }}
       </button>
 
-      <!-- Display Extracted Data -->
       <div v-if="scannedData">
         <h3>Scanned Details</h3>
         <p><strong>Merchant:</strong> {{ scannedData.merchant }}</p>
@@ -32,7 +28,6 @@
         </ul>
       </div>
 
-      <!-- Display Error Message -->
       <div v-if="errorMessage" class="error-message">
         <p>{{ errorMessage }}</p>
       </div>
@@ -52,7 +47,7 @@ const errorMessage = ref("");
 
 const handleFileUpload = (event) => {
   selectedFile.value = event.target.files[0];
-  errorMessage.value = ""; // Clear any previous error messages
+  errorMessage.value = ""; 
 };
 
 const processReceipt = async () => {
@@ -73,7 +68,7 @@ const processReceipt = async () => {
     });
 
     scannedData.value = response.data;
-    console.log("✅ Frontend Received Data:", response.data); // Debugging log
+    console.log("✅ Frontend Received Data:", response.data); 
   } catch (error) {
     console.error("Error processing receipt:", error);
     errorMessage.value = "Failed to process the receipt. Please try again.";

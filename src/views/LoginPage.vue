@@ -93,8 +93,8 @@ button {
 
 .register-btn {
     font-size: 13px;
-    padding: 10px 10px; /* Adjust padding to fit text in one line */
-    white-space: nowrap; /* Prevent text from wrapping */
+    padding: 10px 10px; 
+    white-space: nowrap; 
 }
 
 button:hover {

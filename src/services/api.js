@@ -9,7 +9,7 @@ export async function scanReceipt(file) {
       headers: { "Content-Type": "multipart/form-data" },
     });
 
-    return response.data; // Now returning structured data
+    return response.data;
   } catch (error) {
     console.error("Error scanning receipt:", error);
     return { error: "Failed to process receipt" };

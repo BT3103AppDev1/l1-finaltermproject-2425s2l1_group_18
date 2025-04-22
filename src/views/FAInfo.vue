@@ -20,7 +20,6 @@
       </div>
     </div>
   
-    <!-- 🔽 Financial Advice Container (Always shown if user has an FA) -->
     <div v-if="currentClientFA" class="memos-container">
       <h3>View Memos from Your Financial Advisor</h3>
 
@@ -31,7 +30,6 @@
         </option>
       </select>
 
-      <!-- Popup for displaying memo content -->
       <div v-if="showMemoPopup" class="modal-overlay" @click.self="closeMemoPopup">
         <div class="modal">
           <h3>{{ selectedMemo.label }}</h3>
@@ -123,7 +121,7 @@
       memos.value = snapshot.docs.map(doc => ({
         id: doc.id,
         ...doc.data(),
-        date: doc.data().timestamp.toDate().toLocaleDateString(), // Format the date nicely
+        date: doc.data().timestamp.toDate().toLocaleDateString(), 
       }));
     } catch (error) {
       console.error("Error fetching memos:", error);
@@ -138,27 +136,23 @@
 
   const sortedMemos = computed(() => {
     return [...memos.value].sort((a, b) => {
-      return new Date(b.timestamp) - new Date(a.timestamp); // Sort by timestamp (most recent first)
+      return new Date(b.timestamp) - new Date(a.timestamp); 
     });
   });
 
   const downloadMemo = () => {
     if (!selectedMemo.value) return;
 
-    // Create a Blob with the memo content
     const blob = new Blob([selectedMemo.value.content], { type: "text/plain" });
 
-    // Create a temporary URL for the Blob
     const url = URL.createObjectURL(blob);
 
-    // Create a temporary anchor element to trigger the download
     const a = document.createElement("a");
     a.href = url;
-    a.download = `${selectedMemo.value.label}.txt`; // Use the memo label as the filename
+    a.download = `${selectedMemo.value.label}.txt`; 
     document.body.appendChild(a);
     a.click();
 
-    // Clean up the temporary URL and anchor element
     document.body.removeChild(a);
     URL.revokeObjectURL(url);
   };

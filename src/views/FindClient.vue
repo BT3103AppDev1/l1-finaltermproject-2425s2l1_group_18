@@ -29,7 +29,6 @@
           </ul>
         </div>
   
-        <!-- Right: Sent Requests -->
         <div class="box requests-box">
           <h3>Sent Requests</h3>
           <ul>
@@ -43,8 +42,7 @@
           </ul>
         </div>
       </div>
-  
-      <!-- Modal -->
+
       <div v-if="selectedClient" class="modal-overlay" @click.self="closeModal">
         <div class="modal">
           <h3>Client Details</h3>
@@ -72,15 +70,14 @@ const searchQuery = ref("");
 const searchResults = ref([]);
 const selectedClient = ref(null);
 const sentRequests = ref([]);
-const clients = ref([]); // To store the list of clients associated with the FA
+const clients = ref([]); 
 const currentFAId = ref("");
 const currentFAUsername = ref("");
 const currentFAEmail = ref("");
 
-// Fetch clients dynamically based on the search query
 const searchClients = async () => {
     if (searchQuery.value.trim() === "") {
-        searchResults.value = []; // Clear results if search query is empty
+        searchResults.value = []; 
         return;
     }
 
@@ -89,7 +86,6 @@ const searchClients = async () => {
         const q = query(usersRef, where("role", "==", "User"));
         const querySnapshot = await getDocs(q);
 
-        // Filter clients whose username starts with the search query
         searchResults.value = querySnapshot.docs
             .map((doc) => ({
                 id: doc.id,
@@ -103,7 +99,6 @@ const searchClients = async () => {
     }
 };
 
-// Fetch sent requests for the current FA
 const fetchSentRequests = async () => {
     try {
         const sentRequestsRef = collection(db, "users", currentFAId.value, "sentRequests");
@@ -118,7 +113,6 @@ const fetchSentRequests = async () => {
     }
 };
 
-// Fetch clients associated with the current FA
 const fetchClients = async () => {
     try {
         const clientsRef = collection(db, "users", currentFAId.value, "clients");
@@ -133,28 +127,26 @@ const fetchClients = async () => {
     }
 };
 
-// Fetch the current FA's details correctly
 const fetchCurrentFA = async () => {
-    const user = auth.currentUser; // Get the currently authenticated user
+    const user = auth.currentUser; 
     if (!user) {
         console.error("No authenticated user found.");
         return;
     }
 
-    currentFAId.value = user.uid; // Set the FA's ID from the authenticated user
+    currentFAId.value = user.uid; 
     console.log("Fetching FA details for user ID:", currentFAId.value);
 
     try {
-        // Reference the FA's document in the Firestore "users" collection
-        const faRef = doc(db, "users", user.uid); // Use the UID as the document ID
-        const faDoc = await getDoc(faRef); // Fetch the FA's document
+        const faRef = doc(db, "users", user.uid); 
+        const faDoc = await getDoc(faRef); 
 
         if (faDoc.exists()) {
-            const faData = faDoc.data(); // Get the FA's data
+            const faData = faDoc.data(); 
             console.log("FA document data:", faData);
 
-            currentFAUsername.value = faData.username || "Unknown Username"; // Set the FA's username
-            currentFAEmail.value = faData.email || "Unknown Email"; // Set the FA's email
+            currentFAUsername.value = faData.username || "Unknown Username"; 
+            currentFAEmail.value = faData.email || "Unknown Email"; 
         } else {
             console.error("FA document does not exist in Firestore.");
         }
@@ -163,7 +155,6 @@ const fetchCurrentFA = async () => {
     }
 };
 
-// Check if a request is not allowed (client is in sentRequests or clients)
 const isRequestNotAllowed = (clientId) => {
     return (
         sentRequests.value.some((request) => request.id === clientId) ||
@@ -171,19 +162,16 @@ const isRequestNotAllowed = (clientId) => {
     );
 };
 
-// View client details in a modal
 const viewClient = (client) => {
     selectedClient.value = client;
 };
 
-// Close the modal
 const closeModal = () => {
     selectedClient.value = null;
 };
 
 const sendRequest = async (client) => {
     try {
-        // Ensure FA details are fetched before sending the request
         if (!currentFAUsername.value || !currentFAEmail.value) {
             await fetchCurrentFA();
         }
@@ -194,7 +182,6 @@ const sendRequest = async (client) => {
             return;
         }
 
-        // Use Firestore batch update
         const batch = writeBatch(db);
         const faRequestRef = doc(db, "users", currentFAId.value, "sentRequests", client.id);
         const clientRequestRef = doc(db, "users", client.id, "receivedRequests", currentFAId.value);
@@ -211,7 +198,7 @@ const sendRequest = async (client) => {
             email: currentFAEmail.value,
         });
 
-        await batch.commit(); // Commit all changes in a single operation
+        await batch.commit(); 
 
         alert(`Request sent to ${client.username}`);
         sentRequests.value.push({ id: client.id, username: client.username, email: client.email });
@@ -220,14 +207,11 @@ const sendRequest = async (client) => {
     }
 };
 
-// Delete a sent request
 const deleteRequest = async (request) => {
     try {
-        // Remove from FA's sentRequests subcollection
         const faRequestRef = doc(db, "users", currentFAId.value, "sentRequests", request.id);
         await deleteDoc(faRequestRef);
 
-        // Remove from client's receivedRequests subcollection
         const clientRequestRef = doc(db, "users", request.id, "receivedRequests", currentFAId.value);
         await deleteDoc(clientRequestRef);
 
@@ -238,7 +222,6 @@ const deleteRequest = async (request) => {
     }
 };
 
-// Fetch current FA details, sent requests, and clients on page load
 onMounted(async () => {
     await fetchCurrentFA();
     await fetchSentRequests();

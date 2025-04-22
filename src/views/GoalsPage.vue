@@ -1,14 +1,10 @@
 <template>
     <div>
         <Navbar />
-        <div class="content"> <!-- Changed from "container" to "content" to match CSS -->
+        <div class="content"> 
             <h1>Spending Goals Overview</h1>
             <p>Customize your spending goals for this month.</p>
-
-            <!-- Loading State -->
             <div v-if="loading" class="loading-message">Loading...</div>
-
-            <!-- Goals Display -->
             <div v-else class="goal-container">
 
                 <div class="total-budget">Total Budget: ${{ totalBudget }}</div>
@@ -47,7 +43,7 @@ const db = getFirestore();
 
 const userDocId = ref(null);
 const spendingGoals = ref({});
-const spending = ref({});  // Dynamically fetched from Firestore
+const spending = ref({});  
 const loading = ref(true);
 
 const defaultGoals = {
@@ -59,7 +55,6 @@ const defaultGoals = {
     Others: 100
 };
 
-//Calculate Total budget
 const totalBudget = computed(() => {
     return Object.values(spendingGoals.value).reduce((sum, goal) => sum + goal, 0);
 });
@@ -119,7 +114,6 @@ const getStatusClass = (spent, goal) => {
     return "meeting";
 };
 
-// Get user document ID
 const getUserDocId = async () => {
     const user = auth.currentUser;
     if (!user) return null;
@@ -134,22 +128,18 @@ const getUserDocId = async () => {
     return null;
 };
 
-// Fetch spending from Firestore
 const fetchSpending = async () => {
     if (!userDocId.value) return;
 
     const expensesRef = collection(db, "users", userDocId.value, "expenses");
 
-    // Get current year and month
     const now = new Date();
     const year = now.getFullYear();
-    const month = (now.getMonth() + 1).toString().padStart(2, "0"); // Ensure 2-digit month
+    const month = (now.getMonth() + 1).toString().padStart(2, "0"); 
 
-    // Define start and end date strings
     const startOfMonth = `${year}-${month}-01`;
-    const endOfMonth = `${year}-${month}-31`; // Works since "31" is always the highest valid date
+    const endOfMonth = `${year}-${month}-31`; 
 
-    // Firestore query to filter expenses within the current month
     const q = query(
         expensesRef,
         where("date", ">=", startOfMonth),
@@ -158,7 +148,6 @@ const fetchSpending = async () => {
 
     const querySnapshot = await getDocs(q);
 
-    // Reset spending amounts
     const categoryTotals = {
         Food: 0,
         Transport: 0,
@@ -168,7 +157,6 @@ const fetchSpending = async () => {
         Others: 0
     };
 
-    // Aggregate spending per category
     querySnapshot.forEach(doc => {
         const data = doc.data();
         if (data.category && data.cost) {
@@ -179,8 +167,6 @@ const fetchSpending = async () => {
     spending.value = categoryTotals;
 };
 
-
-// Fetch spending goals
 const fetchSpendingGoals = async () => {
     const docId = await getUserDocId();
     if (!docId) return;
@@ -206,7 +192,6 @@ const fetchSpendingGoals = async () => {
     loading.value = false;
 };
 
-// Save or update a goal
 const saveGoal = async (category) => {
     if (!userDocId.value) return;
 
@@ -215,7 +200,6 @@ const saveGoal = async (category) => {
     alert(`Updated ${category} goal to $${spendingGoals.value[category]}`);
 };
 
-// Fetch data when the user logs in
 onAuthStateChanged(auth, async (user) => {
     if (user) {
         await fetchSpendingGoals();
@@ -228,14 +212,13 @@ onAuthStateChanged(auth, async (user) => {
 </script>
 
 <style scoped>
-/* Ensure navbar does not overlap content */
 .content {
-    margin-top: 80px; /* Adjust based on your navbar height */
+    margin-top: 80px; 
     display: flex;
     flex-direction: column;
-    justify-content: center; /* Center content vertically */
-    align-items: center; /* Center content horizontally */
-    min-height: calc(100vh - 80px); /* Prevents overflow */
+    justify-content: center; 
+    align-items: center; 
+    min-height: calc(100vh - 80px);
     background-color: rgb(251, 248, 243);
     text-align: center;
 }
@@ -249,18 +232,16 @@ onAuthStateChanged(auth, async (user) => {
     border: 2px solid #ccc;
 }
 
-/* Center h1 and p */
 h1, p {
     text-align: center;
     width: 100%;
-    margin: 0; /* Remove default margins to ensure proper centering */
+    margin: 0; 
 }
 
-/* Goal container styling */
 .goal-container {
     display: flex;
     flex-direction: column;
-    align-items: center; /* Center goal items horizontally */
+    align-items: center; 
     width: 80%;
     max-width: 500px;
     margin-top: 20px;
@@ -270,7 +251,7 @@ h1, p {
     margin-bottom: 20px;
     display: flex;
     flex-direction: column;
-    align-items: center; /* Center goal contents horizontally */
+    align-items: center;
     width: 100%;
 }
 
@@ -278,7 +259,7 @@ h1, p {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    width: 100%; /* Ensure goal header spans the full width */
+    width: 100%; 
 }
 
 progress {
@@ -286,7 +267,7 @@ progress {
     height: 10px;
     border-radius: 5px;
     appearance: none;
-    background-color: #ddd; /* Fallback background */
+    background-color: #ddd; 
 }
 
 progress.meeting::-webkit-progress-value {

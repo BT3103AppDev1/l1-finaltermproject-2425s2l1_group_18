@@ -123,8 +123,8 @@ textarea:focus, input:focus {
 }
 
 select:focus {
-  outline: 0.7px solid #5f83ad; /* Change the border color */
-  border-radius: 4px; /* Optional: Add rounded corners */
+  outline: 0.7px solid #5f83ad; 
+  border-radius: 4px; 
 }
 
 .give-advice-container {

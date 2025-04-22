@@ -30,7 +30,6 @@ const handleSignOut = () => {
 </script>
 
 <style>
-/* Global styles (apply to entire page) */
 body {
   margin: 0;
   font-family: "Georgia", serif;

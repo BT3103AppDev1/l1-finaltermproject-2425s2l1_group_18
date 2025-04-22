@@ -29,12 +29,11 @@ const usernameError = ref('');
 const emailError = ref('');
 const router = useRouter();
 
-// Function to check if username is unique
 const checkUsernameUnique = async () => {
     const usersRef = collection(db, "users");
     const q = query(usersRef, where("username", "==", username.value));
     const querySnapshot = await getDocs(q);
-    return querySnapshot.empty; // Returns true if username is unique
+    return querySnapshot.empty; 
 };
 
 const register = async () => {
@@ -59,7 +58,7 @@ const register = async () => {
             role: "User",
         });
         alert("User registered successfully!");
-        router.push('/home');  // Redirect to home after successful registration
+        router.push('/home');  
     } catch (error) {
         if (error.code === "auth/email-already-in-use") {
             emailError.value = "Email already registered!";
