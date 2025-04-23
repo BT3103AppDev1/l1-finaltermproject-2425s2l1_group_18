@@ -76,6 +76,10 @@ const goToSettings = () => {
   flex-direction: column;
   align-items: center;
   min-height: 100vh;
+  justify-content: center;
+  text-align: center;
+  background-color: rgb(251, 248, 243);
+  
 }
 
 .profile-container {
@@ -108,6 +112,13 @@ h1 {
 .profile-info p {
   font-size: 16px;
   margin: 25px 0;
+  line-height: 1.5;
+  color: #333;
+  font-family: 'Georgia', serif;
+  font-weight: 400;
+  text-align: left;
+  margin-left: auto;
+  margin-right: auto;
 }
 
 .settings-btn {
@@ -123,5 +134,36 @@ h1 {
 
 .settings-btn:hover {
   background-color: #707070;
+  transition: background-color 0.3s ease;
+  color: white;
+  font-weight: bold;
+  font-family: 'Georgia', serif;
+  font-size: 12px;
+  padding: 7px 15px;
+  border: none;
+}
+
+.button {
+  background-color: #4CAF50;
+  border: none;
+  color: white;
+  padding: 15px 32px;
+  text-align: center;
+  text-decoration: none;
+  display: inline-block;
+  font-size: 20px;
+  margin: 4px 2px;
+  cursor: pointer;
+}
+
+.button:hover {
+  background-color: #45a049;
+  transition: background-color 0.3s ease;
+  color: white;
+  font-weight: bold;
+  font-family: 'Georgia', serif;
+  font-size: 12px;
+  padding: 7px 15px;
+  border: none;
 }
 </style>

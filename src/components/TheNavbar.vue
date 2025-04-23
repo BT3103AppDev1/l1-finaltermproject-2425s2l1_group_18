@@ -103,9 +103,16 @@ body, html {
 }
 
 .fa-navbar {
-    width: 40%;
-    justify-content: center;
-    gap: 20px;
+    display: flex;
+    justify-content: space-around;
+    align-items: center;
+    width: 75%;
+    padding: 10px 10px;
+    background-color: rgb(251, 248, 243);
+    border-radius: 18px;
+    border: 1.4px solid black;
+    margin: 0 auto;
+    margin-bottom: 1px;
 }
 
 .navbar a {
@@ -114,6 +121,21 @@ body, html {
     font-size: 16px;
     margin: 0 15px;
     background-color: rgb(251, 248, 243);
+    display: flex;
+    align-items: center;
+}
+
+.navbar a:hover {
+    color: rgb(255, 76, 76);
+    background-color: rgba(255, 76, 76, 0.1); 
+    border-radius: 5px; 
+    transition: background-color 0.3s ease, color 0.3s ease;
+    font-weight: bold;
+    font-family: "Georgia", serif;
+    font-size: 16px;
+    margin: 0 15px;
+    display: flex;
+    align-items: center;   
 }
 
 .separator {
@@ -133,7 +155,9 @@ body, html {
 }
 
 .navbar button:hover {
-    background-color: rgb(228, 228, 228);
+    background-color: rgb(255, 76, 76); 
+    color: white; 
+    transition: background-color 0.3s ease, color 0.3s ease;
 }
 
 .settings-icon {
@@ -149,6 +173,7 @@ body, html {
     object-fit: contain;
     cursor: pointer;
     margin-left: 10px;
+    margin-right: 1px;
 }
 
 .profile-icon {
@@ -156,6 +181,7 @@ body, html {
     right: 50px;
     top: 50%;
     transform: translateY(-50%);
+    margin-left: 10px;
 }
 
 .profile-icon img {
@@ -164,5 +190,13 @@ body, html {
     object-fit: contain;
     cursor: pointer;
     margin-left: 10px;
+    justify-content: center;
+}
+
+.settings-icon img:hover,
+.profile-icon img:hover {
+    transform: scale(1.1); /* Slightly enlarge the icon */
+    opacity: 0.8; /* Reduce opacity */
+    transition: transform 0.3s ease, opacity 0.3s ease; /* Smooth transition */
 }
 </style>
