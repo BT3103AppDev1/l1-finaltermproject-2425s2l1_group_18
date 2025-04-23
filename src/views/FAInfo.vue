@@ -210,11 +210,21 @@
     padding: 20px;
     text-align: center;
     font-family: "Georgia", serif;
+    background-color: rgb(251, 248, 243);
+    font-size: 16px;
+    color: #333;
+    line-height: 1.5;
+    font-weight: 400;
+    transition: all 0.3s ease;
   }
   
   h2 {
     font-size: 28px;
     margin-bottom: 30px;
+    font-family: "Georgia", serif;
+    font-weight: 700;
+    color: #333;
+    margin-top: 5px;
   }
   
   .fa-details-box,
@@ -230,6 +240,13 @@
     font-size: 17px;
     margin: 10px 0;
     line-height: 1.6;
+    color: #333;
+    font-family: "Georgia", serif;
+    font-weight: 400;
+    text-align: center;
+    margin-left: auto;
+    margin-right: auto; 
+    margin-bottom: 5px;
   }
 
   .memos-container {
@@ -241,6 +258,15 @@
     align-items: center;  
     justify-content: center;
     margin: 0 auto;
+    font-family: "Georgia", serif;
+    font-size: 16px;
+    color: #333;
+    line-height: 1.5;
+    font-weight: 400;
+    transition: all 0.3s ease;
+    background-color: rgb(251, 248, 243);
+    border-radius: 10px;
+    padding: 5px;
 
   }
 
@@ -250,6 +276,12 @@
     border-radius: 10px;
     font-family: inherit;
     margin-bottom: 20px;
+    font-size: 16px;
+    color: #333;
+    border: 1px solid #ccc;
+    margin-top: 1px;
+    margin-bottom: 20px;
+    font-family: "Georgia", serif;
   }
 
   .modal-overlay {
@@ -312,6 +344,7 @@
   
   .remove-btn:hover {
     background-color: #dd6e6e;
+    color: white;
   }
   
   .find-fa-btn {
@@ -321,6 +354,7 @@
   
   .find-fa-btn:hover {
     background-color: #328cf0;
+    color: white;
   }
   
   .advice-container {

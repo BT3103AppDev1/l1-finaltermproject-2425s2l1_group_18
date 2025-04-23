@@ -385,6 +385,20 @@ body, html {
   padding: 0;
   font-family: Arial, sans-serif;
   height: 100%;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  color: #333;
+  line-height: 1.6;
+  font-size: 16px;
+  text-align: center;
+  background: rgb(251, 248, 243);
+  min-height: 100vh;
+  padding: 20px;
+  box-sizing: border-box;
+  overflow: hidden;
+  font-family: 'Georgia', serif;
 }
 
 .container {
@@ -393,12 +407,30 @@ body, html {
   text-align: center;
   padding: 20px;
   background-color: rgb(251, 248, 243);
+  border-radius: 10px;
+  font-family: 'Georgia', serif;
+  font-size: 16px;
+  color: #333;
+  line-height: 1.5;
+  font-weight: 400;
+  transition: all 0.3s ease;
+  border-radius: 10px;
 }
+
 .find-client-container {
     max-width: 800px;
     margin: auto;
-    padding: 20px;
     text-align: center;
+    padding: 20px;
+    background-color: rgb(251, 248, 243);
+    border-radius: 10px;
+    font-family: 'Georgia', serif;
+    font-size: 16px;
+    color: #333;
+    line-height: 1.5;
+    font-weight: 400;
+    transition: all 0.3s ease;
+    border-radius: 10px;
 }
 
 table {
@@ -408,23 +440,61 @@ table {
   background: white;
   border-radius: 10px;
   overflow: hidden;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+  font-family: 'Georgia', serif;
+  font-size: 16px;
+  color: #333;
+  line-height: 1.5;
+  font-weight: 400;
+  transition: all 0.3s ease;
+  border-radius: 10px;
+  margin-bottom: 20px;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
 }
 
 th, td {
   border: 1px solid #ddd;
   padding: 10px;
   text-align: left;
+  font-family: 'Georgia', serif;
+  font-size: 16px;
+  color: #333;
+  line-height: 1.5;
+  font-weight: 400;
+  transition: all 0.3s ease;
+  border-radius: 5px;
+  margin-bottom: 20px;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+  background-color: rgb(251, 248, 243);
+  transition: background-color 0.3s ease;
+  cursor: pointer;
 }
 
 .total-row {
   background-color: #f0f0f0; 
   font-weight: bold;
+  color: #333;
+  font-family: 'Georgia', serif;
+  font-size: 16px;
+  line-height: 1.5;
+  font-weight: 400;
+  transition: all 0.3s ease;
+  border-radius: 10px;
+  margin-bottom: 20px;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+  padding: 10px;
 }
 
 th {
   background-color: #e0e0e0;
   font-weight: bold;
+  color: #333;
+  font-family: 'Georgia', serif;
+  font-size: 16px;
+  line-height: 1.5;
+  font-weight: 400;
 }
+
 th {
   width: 50%; 
 }
@@ -441,26 +511,92 @@ select {
   border: 1px solid #ccc;
 }
 
+h1 {
+  margin-top: 10px;
+  color: #333;
+  font-family: 'Georgia', serif;
+  font-weight: 400;
+  margin-bottom: 0px;
+  text-align: center;
+  font-weight: bold;
+  color: #333;
+}
+
+h2 {
+  margin-top: 10px;
+  color: #333;
+  font-family: 'Georgia', serif;
+  line-height: 1.5;
+  font-weight: 400;
+  margin-bottom: 10px;
+  text-align: center;
+  font-weight: bold;
+  color: #333;
+}
+
+
 h3 {
-  margin-top: 20px;
+  margin-top: 10px;
+  color: #333;
+  font-family: 'Georgia', serif;
+  font-size: 16px;
+  line-height: 1.5;
+  font-weight: 400;
+  margin-bottom: 10px;
+  text-align: center;
+  font-weight: bold;
+  font-size: 1.2rem;
   color: #333;
 }
 
 label {
   font-weight: bold;
   margin-right: 10px;
+  color: #333;
+  font-family: 'Georgia', serif;
+  font-size: 16px;
+  line-height: 1.5;
+  font-weight: 400;
+  margin-bottom: 10px;
+  text-align: center;
+  font-weight: bold;
+  color: #333;
+  margin-top: 10px;
+  margin-bottom: 5px;
 }
 
 .charts-container {
   display: flex;
   justify-content: space-around;
   flex-wrap: wrap;
+  margin-top: 5px;
+  margin-bottom: 5px;
+  padding: 20px;
+  background-color: rgb(251, 248, 243);
+  border-radius: 10px;
+  font-family: 'Georgia', serif;
+  font-size: 16px;
+  color: #333;
+  line-height: 1.5;
+  font-weight: 400;
+  transition: all 0.3s ease;
 }
 
 .chart {
   flex: 1;
   min-width: 300px;
-  margin: 10px;
+  margin: 2px;
+  margin-top: 5px;
+  margin-bottom: 5px;
+  padding: 20px;
+  background-color: rgb(251, 248, 243);
+  border-radius: 10px;
+  font-family: 'Georgia', serif;
+  font-size: 16px;
+  color: #333;
+  line-height: 1.5;
+  font-weight: 400;
+  transition: all 0.3s ease;
 }
 ul {
   list-style-type: none;
@@ -482,6 +618,18 @@ li {
 
 li:hover {
   background-color: #eef2f7;
+  cursor: pointer;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+  transform: translateY(-2px);
+  transition: transform 0.2s ease, background-color 0.3s ease;
+  font-family: 'Georgia', serif;
+  font-size: 16px;
+  color: #333;
+  line-height: 1.5;
+  font-weight: 400;
+  border-radius: 10px;
+  margin-bottom: 20px;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
 }
 
 button {
@@ -497,7 +645,21 @@ button {
 
 button:hover {
   background-color: #0056b3;
+  color: white;
+  font-family: 'Georgia', serif;
+  font-size: 16px;
+  color: #333;
+  line-height: 1.5;
+  font-weight: 400;
+  transition: all 0.3s ease;
+  border-radius: 10px;
+  margin-bottom: 20px;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+  padding: 10px 18px;
+  background-color: #dc3545;
+  border: none;
 }
+
 .modal-overlay {
   position: fixed;
   top: 0;
@@ -533,6 +695,13 @@ button:hover {
   margin: 0.5rem 0;
   font-size: 1rem;
   color: #555;
+  line-height: 1.5;
+  font-family: 'Georgia', serif;
+  color: #333;
+  line-height: 1.5;
+  font-weight: 400;
+  transition: all 0.3s ease;
+  border-radius: 10px;
 }
 
 .modal button {

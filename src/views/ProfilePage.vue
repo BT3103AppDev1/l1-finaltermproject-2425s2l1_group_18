@@ -79,7 +79,15 @@ const goToSettings = () => {
   justify-content: center;
   text-align: center;
   background-color: rgb(251, 248, 243);
-  
+  font-family: 'Georgia', serif;
+  font-size: 16px;
+  color: #333;
+  line-height: 1.5;
+  font-weight: 400;
+  transition: all 0.3s ease;
+  background-color: rgb(251, 248, 243);
+  border-radius: 10px;
+  box-shadow: 2px 2px 10px rgba(0, 0, 0, 0.1);  
 }
 
 .profile-container {
@@ -93,10 +101,27 @@ const goToSettings = () => {
   width: 90%;
   max-width: 800px;
   min-width: 400px;
+  margin: 0 auto;
+  border-radius: 10px;
+  font-family: 'Georgia', serif;
+  font-size: 16px;
+  color: #333;
 }
 
 h1 {
   text-align: center;
+  font-size: 28px;
+  margin-bottom: 30px;
+  font-family: 'Georgia', serif;
+  font-weight: 700;
+  color: #333;
+  margin-top: 5px;
+  margin-bottom: 20px;
+  padding: 10px;
+  border-radius: 10px;
+  background-color: rgb(251, 248, 243);
+  width: 100%;
+  max-width: 400px;
 }
 
 .profile-info {
@@ -107,6 +132,14 @@ h1 {
   width: 100%;
   max-width: 400px;
   text-align: left;
+  margin: 0 auto;
+  font-family: 'Georgia', serif;
+  font-size: 16px;
+  color: #333;
+  line-height: 1.5;
+  font-weight: 400;
+  transition: all 0.3s ease;
+  background-color: rgb(251, 248, 243);
 }
 
 .profile-info p {
@@ -119,6 +152,11 @@ h1 {
   text-align: left;
   margin-left: auto;
   margin-right: auto;
+  margin-bottom: 5px;
+  padding: 5px;
+  border-radius: 10px;
+  background-color: rgb(251, 248, 243);
+  width: 100%;
 }
 
 .settings-btn {

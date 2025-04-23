@@ -513,6 +513,20 @@ h2 {
 }
 .view-edit-button, .delete-button {
     font-family: "Georgia", serif;
+    font-size: 12px;
+    padding: 8px 14px;
+    border: 0.4px black solid;
+    border-radius: 35px;
+    cursor: pointer;
+    text-decoration: none;
+    text-transform: none;
+    text-shadow: none;
+    text-align: left;
+    text-indent: 0;
+    text-overflow: clip;
+    text-underline-position: auto;
+    transition: background-color 0.3s ease, opacity 0.3s ease;
+    margin-left: 10px;
 }
 
 .container {
@@ -880,19 +894,41 @@ select {
     justify-content: center;
     gap: 8px; 
     margin-top: 10px;
+    margin-bottom: 10px;
+    margin-right: 10px;
+    margin-left: 10px;
+    padding: 10px;
+    border-radius: 10px;
+    font-family: "Georgia", serif;
+    
 }
 
 .modal-button-group button {
     padding: 6px 10px; 
-    font-size: 11px; 
+    font-size: 12px; 
     border-radius: 20px;
     background-color: #e5e4e4;
-    width: 40%; 
+    width: 50%; 
 }
+
+
 
 .modal-button-group .cancel-button {
     background-color: #f8dcdc;
     color: black;
+    font-weight: bold;
+    font-family: "Georgia", serif;
+    font-size: 12px;
+    border: 0.4px black solid;
+    border-radius: 35px;
+    cursor: pointer;
+    text-decoration: none;
+    text-transform: none;
+    text-shadow: none;
+    text-align: left;
+    text-indent: 0;
+    text-overflow: clip;
+    text-underline-position: auto;
 }
 
 .smaller-modal {
@@ -983,11 +1019,11 @@ select {
 }
 
 .button-group .cancel-button:hover {
-    background-color: #f5a5a5; /* Darker red for hover */
-    color: white; /* Change text color to white */
-    transform: scale(1.05); /* Slightly enlarge the button */
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2); /* Add a subtle shadow */
-    transition: transform 0.2s ease, background-color 0.3s ease, box-shadow 0.3s ease; /* Smooth transition */
+    background-color: #f5a5a5; 
+    color: white; 
+    transform: scale(1.05);
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2); 
+    transition: transform 0.2s ease, background-color 0.3s ease, box-shadow 0.3s ease; 
 }
 
 .modal-content label {
@@ -995,11 +1031,37 @@ select {
     margin-bottom: 5px;
     font-weight: bold;
     text-align: left;
+    font-family: "Georgia", serif;
+    font-size: 12px;
+    color: black;
+    text-decoration: none;
+    text-transform: none;
+    text-shadow: none;
+    text-align: left;
+    text-indent: 0;
+    text-overflow: clip;
+    text-underline-position: auto;
 }
 
 .sort-container {
     display: flex;
     justify-content: flex-end;
     margin-bottom: 10px;
+    padding: 10px;
+    border-radius: 10px;
+    background-color: rgb(251, 248, 243);
+    width: 100%;
+    max-width: 600px;
+    font-family: "Georgia", serif;
+    font-size: 14px;
+    font-weight: 400;
+    color: black;
+    text-decoration: none;
+    text-transform: none;
+    text-shadow: none;
+    text-align: left;
+    text-indent: 0;
+    text-overflow: clip;
+    text-underline-position: auto;
 }
 </style>

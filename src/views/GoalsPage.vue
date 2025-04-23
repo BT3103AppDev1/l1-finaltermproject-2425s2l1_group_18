@@ -221,7 +221,18 @@ onAuthStateChanged(auth, async (user) => {
     min-height: calc(100vh - 80px);
     background-color: rgb(251, 248, 243);
     text-align: center;
+    font-family: 'Georgia', serif;
+    font-size: 16px;
+    color: #333;
+    line-height: 1.5;
+    padding: 20px;
+    text-shadow: none;
+    text-align: left;
+    text-indent: 0;
+    text-overflow: clip;
+    text-underline-position: auto;
 }
+
 .total-budget {
     background-color: #f8f9fa;
     padding: 10px 20px;
@@ -230,12 +241,21 @@ onAuthStateChanged(auth, async (user) => {
     font-weight: bold;
     margin-bottom: 20px;
     border: 2px solid #ccc;
+    text-shadow: none;
+    text-align: left;
+    text-indent: 0;
+    text-overflow: clip;
+    text-underline-position: auto;
 }
 
 h1, p {
     text-align: center;
     width: 100%;
-    margin: 0; 
+    margin: 0;
+    margin-top: 0px;
+    margin-bottom: 10px;
+    font-family: 'Georgia', serif;
+    color: #333; 
 }
 
 .goal-container {
@@ -245,6 +265,14 @@ h1, p {
     width: 80%;
     max-width: 500px;
     margin-top: 20px;
+    padding: 20px;
+    background-color: rgb(251, 248, 243);
+    border-radius: 10px;
+    font-family: 'Georgia', serif;
+    font-size: 16px;
+    color: #333;
+    line-height: 1.5;
+    font-weight: 400;
 }
 
 .goal {
@@ -253,6 +281,15 @@ h1, p {
     flex-direction: column;
     align-items: center;
     width: 100%;
+    padding: 10px;
+    border-radius: 10px;
+    transition: all 0.3s ease;
+    font-family: 'Georgia', serif;
+    font-size: 16px;
+    color: #333;
+    line-height: 1.5;
+    font-weight: 400;
+    
 }
 
 .goal-header {
@@ -260,6 +297,17 @@ h1, p {
     justify-content: space-between;
     align-items: center;
     width: 100%; 
+    margin-bottom: 10px;
+    font-family: 'Georgia', serif;
+    font-size: 16px;
+    color: #333;
+    line-height: 1.5;
+    font-weight: 400;
+    text-align: left;
+    text-indent: 0;
+    text-overflow: clip;
+    text-underline-position: auto;
+    text-shadow: none;
 }
 
 progress {
@@ -268,6 +316,17 @@ progress {
     border-radius: 5px;
     appearance: none;
     background-color: #ddd; 
+    margin-bottom: 10px;
+    font-family: 'Georgia', serif;
+    font-size: 16px;
+    color: #333;
+    line-height: 1.5;
+    font-weight: 400;
+    text-align: left;
+    text-indent: 0;
+    text-overflow: clip;
+    text-underline-position: auto;
+    text-shadow: none;
 }
 
 progress.meeting::-webkit-progress-value {
@@ -297,6 +356,19 @@ button {
 
 button:hover {
     background-color: #5aa59a;
+    transition: background-color 0.3s ease;
+    color: white;
+    font-weight: bold;
+    font-family: 'Georgia', serif;
+    font-size: 12px;
+    padding: 7px 15px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    text-align: center;
+    margin: 0 auto;
+    text-decoration: none;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
 }
 
 .meeting {

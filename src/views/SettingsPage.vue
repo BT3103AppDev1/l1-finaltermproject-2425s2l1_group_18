@@ -394,6 +394,15 @@ const updateSavingsTarget = async () => {
     flex-direction: column;
     align-items: center;
     min-height: 100vh;
+    background-color: rgb(251, 248, 243);
+    justify-content: center;
+    text-align: center;
+    font-family: 'Georgia', serif;
+    font-size: 16px;
+    color: #333;
+    line-height: 1.5;
+    font-weight: 400;
+    transition: all 0.3s ease;
 }
 
 .settings-container {
@@ -404,11 +413,23 @@ const updateSavingsTarget = async () => {
     background-color: rgb(251, 248, 243);
     text-align: center;
     padding: 20px;
+    max-width: 600px;
+    width: 90%;
+    border-radius: 10px;
+    margin: 40px auto;
+    font-family: 'Georgia', serif;
+    font-size: 16px;
+    color: #333;
 }
 
 h2 {
     font-size: 24px;
+    margin-top: 10px;
     margin-bottom: 20px;
+    font-family: 'Georgia', serif;
+    font-weight: 700;
+    color: #333;
+    margin-top: 5px;
 }
 
 .setting-options {
@@ -416,6 +437,19 @@ h2 {
     flex-direction: column;
     gap: 12px;
     width: 250px;
+    margin: 0 auto;
+    font-family: 'Georgia', serif;
+    font-size: 16px;
+    color: #333;
+    line-height: 1.5;
+    font-weight: 400;
+    transition: all 0.3s ease;
+    background-color: rgb(251, 248, 243);
+    border-radius: 10px;
+    padding: 20px;
+    box-shadow: 2px 2px 10px rgba(0, 0, 0, 0.1);
+    margin-top: 20px;
+    margin-bottom: 20px;
 }
 
 button {
@@ -434,6 +468,11 @@ button {
 
 button:hover {
     background-color: #f4d3f9; 
+    border: 1px solid #f4d3f9;
+    transition: 0.3s;
+    font-family: "Georgia", serif;
+    border: 1px solid black;
+    cursor: pointer;
 }
 
 .modal-overlay {
@@ -472,6 +511,12 @@ button:hover {
     display: flex;
     justify-content: center;
     margin-top: 10px;
+    gap: 10px;
+    width: 100%;
+    padding: 10px;
+    background-color: rgb(251, 248, 243);
+    border-radius: 10px;
+    box-shadow: 2px 2px 10px rgba(0, 0, 0, 0.1);
 }
 
 .modal-buttons button {
