@@ -314,7 +314,7 @@ const updateRepNumber = async () => {
         if (!user) throw new Error('No user signed in.');
 
         const userDoc = doc(db, 'users', user.uid);
-        await updateDoc(userDoc, { representativeNumber: newRepNumber.value });
+        await updateDoc(userDoc, { regNumber: newRepNumber.value });
 
         alert('Representative number updated successfully!');
         showEditRepNumber.value = false;
