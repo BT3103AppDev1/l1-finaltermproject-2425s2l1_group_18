@@ -12,7 +12,7 @@
               <p><strong>Gender:</strong> {{ userProfile.gender }}</p>
               
               <div v-if="userProfile.role === 'FA'">
-                  <p><strong>Representative Number:</strong> {{ userProfile.representativeNumber }}</p>
+                  <p><strong>Representative Number:</strong> {{ userProfile.regNumber }}</p>
                   <p><strong>About:</strong> {{ userProfile.about }}</p>
                   <p><strong>Company:</strong> {{ userProfile.company }}</p>
               </div>
