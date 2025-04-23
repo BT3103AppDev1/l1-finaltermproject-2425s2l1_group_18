@@ -125,6 +125,12 @@ textarea:focus, input:focus {
 select:focus {
   outline: 0.7px solid #5f83ad; 
   border-radius: 4px; 
+  max-width: 600px;
+  margin: 0 auto;
+  padding: 10px;
+  font-family: inherit;
+  font-size: 16px;
+  color: #333;
 }
 
 .give-advice-container {
@@ -133,6 +139,12 @@ select:focus {
   padding: 20px;
   text-align: center;
   font-family: 'Georgia', serif;
+  background-color: rgb(251, 248, 243);
+  border-radius: 10px;
+  font-size: 16px;
+  color: #333;
+  line-height: 1.5;
+  font-weight: 400;
 }
 
 .advice-textarea {
@@ -142,6 +154,16 @@ select:focus {
   margin-bottom: 20px;
   border-radius: 10px;
   font-family: inherit;
+  font-size: 16px;
+  color: #333;
+  border: 1px solid #ccc;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+}
+
+textarea:focus, input:focus {
+  outline: none;
+  border-color: #5f83ad; /* Change border color on focus */
+  box-shadow: 0 0 5px rgba(95, 131, 173, 0.5); /* Add a subtle glow */
 }
 
 .client-dropdown {
@@ -150,10 +172,32 @@ select:focus {
   border-radius: 10px;
   font-family: inherit;
   margin-bottom: 20px;
+  font-size: 16px;
+  color: #333;
+  border: 1px solid #ccc;
 }
 
-.label-input:focus {
-  outline: none; 
+.client-dropdown:focus {
+  outline: none;
+  border-color: #5f83ad;
+  box-shadow: 0 0 5px rgba(95, 131, 173, 0.5);
+}
+
+.input-label {
+  font-size: 16px;
+  margin-bottom: 10px;
+  color: #333;
+  width: 100%;
+  text-align: left;
+  font-family: 'Georgia', serif;
+  font-size: 16px;
+  color: #333;
+  line-height: 1.5;
+  font-weight: 400;
+  margin-left: 10px;
+  margin-top: 10px;
+  margin-bottom: 5px;
+  font-weight: bold;
 }
 
 .submit-btn {
@@ -164,10 +208,19 @@ select:focus {
   border-radius: 25px;
   font-size: 13px;
   cursor: pointer;
+  transition: background-color 0.3s ease;
+  font-family: 'Georgia', serif;
+  font-size: 16px;
+  line-height: 1.5;
 }
 
 .submit-btn:disabled {
   background-color: grey;
   cursor: not-allowed;
+}
+
+.submit-btn:hover {
+  background-color: #4a6d91; /* Darker shade on hover */
+  transform: scale(1.05); /* Slightly enlarge on hover */
 }
 </style>

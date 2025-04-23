@@ -235,6 +235,10 @@ onMounted(async () => {
   margin: auto;
   padding: 20px;
   font-family: "Georgia", serif;
+  justify-content: center;
+  align-items: center;
+  text-align: center;
+  background-color: rgb(251, 248, 243);
 }
 
 .columns {
@@ -242,6 +246,12 @@ onMounted(async () => {
   justify-content: space-between;
   gap: 30px;
   margin-top: 20px;
+  flex-wrap: wrap;
+  align-items: flex-start;
+  width: 100%;
+  text-align: center;
+  font-family: "Georgia", serif;
+  background-color: rgb(251, 248, 243);
 }
 
 .box {
@@ -249,14 +259,41 @@ onMounted(async () => {
   padding: 20px;
   border: 1px solid #000;
   border-radius: 5px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  flex: 1;
+  min-width: 300px;
+  margin-bottom: 20px;
+  font-family: "Georgia", serif;
+  font-size: 16px;
+  color: #333;
+  font-weight: 400;
+  text-align: left;
 }
 
 .search-box {
   flex: 0.8;
+  margin-right: 20px;
+  background-color: rgb(251, 248, 243);
+  padding: 20px;
+  border: 1px solid #000;
+  border-radius: 5px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  font-family: "Georgia", serif;
+  font-size: 16px;
+  color: #333;
 }
 
 .requests-box {
   flex: 1.2;
+  margin-right: 20px;
+  background-color: rgb(251, 248, 243);
+  padding: 20px;
+  border: 1px solid #000;
+  border-radius: 5px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  font-family: "Georgia", serif;
+  font-size: 16px;
+  color: #333;
 }
 
 input[type="text"] {
@@ -267,6 +304,8 @@ input[type="text"] {
   border-radius: 12px;
   font-size: 14px;
   background-color: rgb(251, 248, 243);
+  font-family: "Georgia", serif;
+  color: #333;  
 }
 
 h3 {
@@ -291,6 +330,11 @@ li {
   display: flex;
   justify-content: space-between;
   align-items: center;
+  transition: box-shadow 0.3s ease;
+}
+
+li:hover {
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
 }
 
 .button-group {
@@ -305,10 +349,25 @@ button {
   cursor: pointer;
   font-size: 12px;
   font-family: "Georgia", serif;
+  color: white;
+  transition: background-color 0.3s ease, color 0.3s ease;
+  font-weight: bold;
+  background-color: grey;
+  color: black;
+  font-family: "Georgia", serif;
+  font-size: 14px;
 }
 
 button:hover {
   opacity: 0.85;
+  transition: background-color 0.3s ease, color 0.3s ease;
+  font-weight: bold;
+  font-family: "Georgia", serif;
+  background-color: #a0c4ff;
+  color: white;
+  font-size: 14px;
+  padding: 5px 17px;
+  border-radius: 20px;
 }
 
 button:nth-of-type(1) {
