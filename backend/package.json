@@ -4,6 +4,7 @@
     "main": "server.js",
     "type": "module",
     "dependencies": {
+        "@google-cloud/secret-manager": "^6.0.1",
         "@google-cloud/vision": "^4.3.3",
         "cors": "^2.8.5",
         "dotenv": "^16.4.7",
