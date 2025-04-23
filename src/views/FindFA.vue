@@ -41,7 +41,7 @@
           <p><strong>Email:</strong> {{ selectedFA.email }}</p>
           <p><strong>Company:</strong> {{ selectedFA.company }}</p>
           <p><strong>About:</strong> {{ selectedFA.about }}</p>
-          <p><strong>Representative Number:</strong> {{ selectedFA.representativeNumber }}</p>
+          <p><strong>Representative Number:</strong> {{ selectedFA.regNumber }}</p>
           <p><strong>Total Clients:</strong> {{ selectedFA.totalClients }}</p>
           <div class="button-container">
             <button @click="closeModal">Close</button>

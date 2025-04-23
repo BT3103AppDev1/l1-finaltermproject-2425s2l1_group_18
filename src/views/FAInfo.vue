@@ -8,7 +8,7 @@
         <p><strong>Email:</strong> {{ currentClientFA.email }}</p>
         <p><strong>Company:</strong> {{ currentClientFA.company }}</p>
         <p><strong>About:</strong> {{ currentClientFA.about }}</p>
-        <p><strong>Representative Number:</strong> {{ currentClientFA.representativeNumber }}</p>
+        <p><strong>Representative Number:</strong> {{ currentClientFA.regNumber }}</p>
         <p><strong>Total Clients:</strong> {{ currentClientFA.totalClients }}</p>
         <button @click="removeFA" class="remove-btn">Remove FA</button>
       </div>
