@@ -314,6 +314,8 @@ input[type="text"] {
   
   li:hover {
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+    transition: box-shadow 0.3s ease;
+    transform: translateY(-2px);
   }
 
   .button-group {

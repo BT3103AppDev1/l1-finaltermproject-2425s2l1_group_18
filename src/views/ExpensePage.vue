@@ -480,12 +480,36 @@ body, html {
     padding: 0;
     font-family: "Georgia", serif;
     height: 100%;
+    overflow: hidden;
+    color: black;
+    font-size: 14px;
+    line-height: 1.6;
+    font-weight: 400;
+    text-align: center;
+    text-decoration: none;
+    text-transform: none;
+    text-shadow: none;
+    text-align: left;
+    text-indent: 0;
+    text-overflow: clip;
+    text-underline-position: auto;
 }
 
 h2 {
     font-family: "Georgia", serif;
     font-weight: normal;
     text-align: center;
+    font-size: 28px;
+    margin: 0;
+    padding: 0;
+    color: black;
+    text-decoration: none;
+    text-transform: none;
+    text-shadow: none;
+    text-align: left;
+    text-indent: 0;
+    text-overflow: clip;
+    text-underline-position: auto;
 }
 .view-edit-button, .delete-button {
     font-family: "Georgia", serif;
@@ -497,6 +521,9 @@ h2 {
     padding: 20px;
     box-sizing: border-box;
     background-color: rgb(251, 248, 243);
+    overflow-y: auto;
+    overflow-x: hidden;
+    
 }
 
 .header {
@@ -531,17 +558,56 @@ table {
     border-radius: 18px;
     overflow: hidden;
     border: 1px solid black;
+    margin-top: 20px;
+    margin-bottom: 20px;
+    font-family: "Georgia", serif;
+    font-size: 14px;
+    color: black;
+    font-weight: 400;
+    text-align: left;
+    text-decoration: none;
+    text-transform: none;
+    text-shadow: none;
+    text-align: left;
+    text-indent: 0;
+    text-overflow: clip;
+    text-underline-position: auto;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+    margin: 0 auto; 
 }
 
 th, td {
     padding: 9px;
     text-align: left;
     border-bottom: 1px solid black;
+    font-family: "Georgia", serif;
+    font-size: 14px;
+    font-weight: 400;
+    color: black;
+    text-decoration: none;
+    text-transform: none;
+    text-shadow: none;
+    text-align: left;
+    text-indent: 0;
+    text-overflow: clip;
+    text-underline-position: auto;
+    background: rgb(251, 248, 243);
+    transition: background-color 0.3s ease, color 0.3s ease;
+    cursor: pointer;
+    
 }
 
 th {
     background: rgb(251, 248, 243);
     font-weight: bold;
+    color: black;
+    text-decoration: none;
+    text-transform: none;
+    text-shadow: none;
+    text-align: left;
+    text-indent: 0;
+    text-overflow: clip;
+    text-underline-position: auto;
 }
 
 tr.recurring {
@@ -575,26 +641,103 @@ button {
     border-radius: 35px;
     cursor: pointer;
     font-size: 12px;
+    font-family: "Georgia", serif;
+    background: #f8dcdc;
+    color: black;
+    font-weight: bold;
+    text-decoration: none;
+    text-transform: none;
+    text-shadow: none;
+    text-align: left;
+    text-indent: 0;
+    text-overflow: clip;
+    text-underline-position: auto;
+    transition: background-color 0.3s ease, opacity 0.3s ease;
 }
 
 button:hover {
     opacity: 0.8;
+    background: #e2c5ff;
+    color: black;
+    font-weight: bold;
+    font-family: "Georgia", serif;
+    font-size: 12px;
+    padding: 8px 14px;
+    border: 0.4px black solid;
+    border-radius: 35px;
+    cursor: pointer;
+    text-decoration: none;
+    text-transform: none;
+    text-shadow: none;
+    text-align: left;
+    text-indent: 0;
+    text-overflow: clip;
+    text-underline-position: auto;
+    transition: background-color 0.3s ease, opacity 0.3s ease;
 }
 
 button:nth-child(1) {
     background: #a8eaf8;
     color: black;
+    font-weight: bold;
+    font-family: "Georgia", serif;
+    font-size: 12px;
+    padding: 8px 14px;
+    border: 0.4px black solid;
+    border-radius: 35px;
+    cursor: pointer;
+    text-decoration: none;
+    text-transform: none;
+    text-shadow: none;
+    text-align: left;
+    text-indent: 0;
+    text-overflow: clip;
+    text-underline-position: auto;
+    transition: background-color 0.3s ease, opacity 0.3s ease;
 }
 
 button:nth-child(2) {
     background: #f97f8a;
     color: black;
+    font-weight: bold;
+    font-family: "Georgia", serif;
+    font-size: 12px;
+    padding: 8px 14px;
+    border: 0.4px black solid;
+    border-radius: 35px;
+    cursor: pointer;
+    text-decoration: none;
+    text-transform: none;
+    text-shadow: none;
+    text-align: left;
+    text-indent: 0;
+    text-overflow: clip;
+    text-underline-position: auto;
+    transition: background-color 0.3s ease, opacity 0.3s ease;
 }
 
 .add-expense-container {
     display: flex;
     justify-content: center;
     margin-top: 20px;
+    margin-bottom: 20px;
+    padding: 10px;
+    border-radius: 10px;
+    width: 100%;
+    max-width: 600px;
+    margin: 0 auto;
+    font-family: "Georgia", serif;
+    font-size: 14px;
+    font-weight: 400;
+    color: black;
+    text-decoration: none;
+    text-transform: none;
+    text-shadow: none;
+    text-align: left;
+    text-indent: 0;
+    text-overflow: clip;
+    text-underline-position: auto;
+    background: rgb(251, 248, 243);
 }
 
 .add-expense-btn {
@@ -606,11 +749,35 @@ button:nth-child(2) {
     border-radius: 35px;
     cursor: pointer;
     font-family: "Georgia", serif;
+    font-weight: bold;
+    text-decoration: none;
+    text-transform: none;
+    text-shadow: none;
+    text-align: left;
+    text-indent: 0;
+    text-overflow: clip;
+    text-underline-position: auto;
 }
 
 .add-expense-btn:hover {
+    opacity: 0.8;
     background: #e2c5ff;
-}
+    color: black;
+    font-weight: bold;
+    font-family: "Georgia", serif;
+    font-size: 12px;
+    padding: 8px 14px;
+    border: 0.4px black solid;
+    border-radius: 35px;
+    cursor: pointer;
+    text-decoration: none;
+    text-transform: none;
+    text-shadow: none;
+    text-align: left;
+    text-indent: 0;
+    text-overflow: clip;
+    text-underline-position: auto;
+    transition: background-color 0.3s ease, opacity 0.3s ease;}
 
 .filter-buttons-container {
     display: flex;
@@ -618,14 +785,42 @@ button:nth-child(2) {
     gap: 2px; 
     margin-bottom: 8px;  
     background-color: rgb(251, 248, 243);
+    padding: 10px;
+    border-radius: 10px;
+    width: 100%;
+    max-width: 600px;
+    font-family: "Georgia", serif;
+    font-size: 14px;
+    font-weight: 400;
+    color: black;
+    text-decoration: none;
+    text-transform: none;
+    text-shadow: none;
+    text-align: left;
+    text-indent: 0;
+    text-overflow: clip;
+    text-underline-position: auto;
+    background: rgb(251, 248, 243);
 }
 
 .filter-button {
     padding: 3px 3px;
-    font-size: 12px;
+    font-size: 14px;
     cursor: pointer;
     border-radius: 10px;
     background-color: rgb(251, 248, 243);
+    border: 1px solid #ccc;
+    margin-right: 5px;
+    font-family: "Georgia", serif;
+    font-weight: 400;
+    color: black;
+    text-decoration: none;
+    text-transform: none;
+    text-shadow: none;
+    text-align: left;
+    text-indent: 0;
+    text-overflow: clip;
+    text-underline-position: auto;
 }
 
 select {
@@ -634,6 +829,16 @@ select {
     border-radius: 5px;
     font-size: 14px;
     background: white;
+    color: black;
+    font-family: "Georgia", serif;
+    font-weight: 400;
+    text-decoration: none;
+    text-transform: none;
+    text-shadow: none;
+    text-align: left;
+    text-indent: 0;
+    text-overflow: clip;
+    text-underline-position: auto;
 }
 
 .expenses-table .actions-column {
@@ -710,6 +915,25 @@ select {
     align-items: center; 
     gap: 10px; 
     margin-top: 15px;
+    margin-bottom: 15px;
+    margin-right: 10px;
+    margin-left: 10px;
+    padding: 10px;
+    border-radius: 10px;
+    background-color: rgb(251, 248, 243);
+    width: 100%;
+    max-width: 600px;
+    font-family: "Georgia", serif;
+    font-size: 14px;
+    font-weight: 400;
+    color: black;
+    text-decoration: none;
+    text-transform: none;
+    text-shadow: none;
+    text-align: left;
+    text-indent: 0;
+    text-overflow: clip;
+    text-underline-position: auto;
 }
 
 .button-group button {
@@ -723,19 +947,47 @@ select {
     border: 1px solid #ccc;
     cursor: pointer;
     transition: background-color 0.3s ease, opacity 0.3s ease; 
+    text-decoration: none;
+    text-transform: none;
+    text-shadow: none;
+    text-align: left;
+    text-indent: 0;
+    text-overflow: clip;
+    text-underline-position: auto;
 }
 
 .button-group button:hover {
     opacity: 0.9; 
+    background-color: #d6d6d6;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2); 
+    transition: transform 0.2s ease, background-color 0.3s ease, box-shadow 0.3s ease; 
 }
 
 .button-group .cancel-button {
     background-color: #f8dcdc;
     color: black;
+    font-weight: bold;
+    font-family: "Georgia", serif;
+    font-size: 12px;
+    padding: 8px 14px;
+    border: 0.4px black solid;
+    border-radius: 35px;
+    cursor: pointer;
+    text-decoration: none;
+    text-transform: none;
+    text-shadow: none;
+    text-align: left;
+    text-indent: 0;
+    text-overflow: clip;
+    text-underline-position: auto;
 }
 
 .button-group .cancel-button:hover {
-    background-color: #f5bcbc; 
+    background-color: #f5a5a5; /* Darker red for hover */
+    color: white; /* Change text color to white */
+    transform: scale(1.05); /* Slightly enlarge the button */
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2); /* Add a subtle shadow */
+    transition: transform 0.2s ease, background-color 0.3s ease, box-shadow 0.3s ease; /* Smooth transition */
 }
 
 .modal-content label {
