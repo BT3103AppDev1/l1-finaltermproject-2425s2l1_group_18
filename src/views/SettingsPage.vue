@@ -514,9 +514,8 @@ button:hover {
     gap: 10px;
     width: 100%;
     padding: 10px;
-    background-color: rgb(251, 248, 243);
+    background-color: white;
     border-radius: 10px;
-    box-shadow: 2px 2px 10px rgba(0, 0, 0, 0.1);
 }
 
 .modal-buttons button {
